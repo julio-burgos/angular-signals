@@ -1,0 +1,70 @@
+<div class="container">
+  <header>
+    <h1>Angular Signals Demo</h1>
+    <p>Demonstrating deepSignal, deepComputed, spring, and tween</p>
+  </header>
+
+  <section class="demo-section">
+    <h2>🔵 DeepSignal Demo</h2>
+    <div class="controls">
+      <div class="control-group">
+        <label>Name:</label>
+        <input type="text" [value]="userProfile().name" (input)="updateName($any($event.target).value)" />
+      </div>
+      <div class="control-group">
+        <label>Age:</label>
+        <input type="number" [value]="userProfile().age" (input)="updateAge(+$any($event.target).value)" />
+      </div>
+      <div class="control-group">
+        <label>City:</label>
+        <input type="text" [value]="userProfile().address.city" (input)="updateCity($any($event.target).value)" />
+      </div>
+    </div>
+    <div class="output">
+      <h3>Values:</h3>
+      <pre>{{ userProfile() | json }}</pre>
+      <h3>Computed Summary:</h3>
+      <pre>{{ userSummary() | json }}</pre>
+    </div>
+  </section>
+
+  <section class="demo-section">
+    <h2>🌀 Spring Animation</h2>
+    <div class="button-group">
+      <button (click)="animateSpringTo(0)">0</button>
+      <button (click)="animateSpringTo(100)">100</button>
+      <button (click)="animateSpringTo(200)">200</button>
+    </div>
+    <div class="value-display">
+      <span>Target: {{ springDemo.target() }}</span>
+      <span>Current: {{ springDemo.current() | number:'1.2-2' }}</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill spring" [style.width.%]="springDemo.current() / 2"></div>
+    </div>
+    <div class="canvas">
+      <div class="ball spring-ball" [style.transform]="'translate(' + springPosition.current()[0] + 'px, ' + springPosition.current()[1] + 'px)'"></div>
+    </div>
+    <button class="reset-btn" (click)="resetSpring()">Reset Springs</button>
+  </section>
+
+  <section class="demo-section">
+    <h2>⏱️ Tween Animation</h2>
+    <div class="button-group">
+      <button (click)="animateTweenTo(0)">0</button>
+      <button (click)="animateTweenTo(100)">100</button>
+      <button (click)="animateTweenTo(200)">200</button>
+    </div>
+    <div class="value-display">
+      <span>Target: {{ tweenDemo.target() }}</span>
+      <span>Current: {{ tweenDemo.current() | number:'1.2-2' }}</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill tween" [style.width.%]="tweenDemo.current() / 2"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Check the console to see reactive updates!</p>
+  </footer>
+</div>
