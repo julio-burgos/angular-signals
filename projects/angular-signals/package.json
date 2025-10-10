@@ -1,9 +1,31 @@
 {
   "name": "angular-signals",
   "version": "0.0.2",
+  "description": "Advanced Angular signals library with deep equality checking and physics-based animations",
+  "keywords": [
+    "angular",
+    "signals",
+    "reactive",
+    "animation",
+    "spring",
+    "tween",
+    "deep-equality",
+    "state-management"
+  ],
+  "author": "Julio Burgos",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/angular-signals.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/angular-signals/issues"
+  },
+  "homepage": "https://github.com/yourusername/angular-signals#readme",
   "peerDependencies": {
     "@angular/common": "^20.3.0",
-    "@angular/core": "^20.3.0"
+    "@angular/core": "^20.3.0",
+    "lodash-es": "^4.17.21"
   },
   "dependencies": {
     "tslib": "^2.3.0"
