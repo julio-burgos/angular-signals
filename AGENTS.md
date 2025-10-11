@@ -2,6 +2,51 @@
 
 This document provides guidance for AI agents working with the Angular Signals library.
 
+## ⚠️ MANDATORY WORKFLOW FOR ALL CHANGES ⚠️
+
+**CRITICAL**: When adding ANY new functionality to this library, you MUST complete ALL three steps:
+
+### Required Steps for Every New Feature:
+
+1. **✅ Update README.md**
+   - Add feature to the appropriate category in the Features section
+   - Add comprehensive API documentation with:
+     - Function signature with TypeScript types
+     - Parameters description
+     - Return value description
+     - Code examples showing usage
+     - Follow the existing documentation format exactly
+
+2. **✅ Update Demo Application**
+   - Add interactive example to `projects/demo/src/app/app.ts`
+   - Add UI section to `projects/demo/src/app/app.html`
+   - Include:
+     - Visual display of current state
+     - Interactive controls (buttons, inputs, etc.)
+     - Real-time feedback showing the utility in action
+     - Clear section title and description
+
+3. **✅ Update CHANGELOG.md**
+   - Add entry under "Unreleased" or appropriate version
+   - Use format: `- Added: [utility name] - [brief description]`
+   - Include breaking changes if applicable
+
+### Verification Checklist
+
+Before completing any feature implementation, verify:
+
+- [ ] README.md updated with API docs and examples
+- [ ] Demo app has interactive example
+- [ ] Demo app example is visible at http://localhost:4200
+- [ ] CHANGELOG.md has entry for the change
+- [ ] All tests pass (`npm test`)
+- [ ] Feature is exported from `public-api.ts`
+- [ ] TypeScript types are properly defined
+
+### Non-Compliance
+
+**DO NOT** consider a feature complete unless ALL three documentation requirements are met. Incomplete documentation makes the library unusable for developers.
+
 ## Project Overview
 
 **Angular Signals** is a TypeScript library that extends Angular's signals API with:
@@ -170,9 +215,13 @@ effect(() => {
 1. Create implementation in `projects/angular-signals/src/lib/[category]/[name].ts`
 2. Create tests in `[name].spec.ts`
 3. Export from `public-api.ts`
-4. Update README.md with API documentation
-5. Add example to demo app (`projects/demo/src/app/`)
-6. Update CHANGELOG.md
+4. **Update README.md with API documentation** (See "MANDATORY WORKFLOW" above)
+5. **Add example to demo app** (`projects/demo/src/app/`) (See "MANDATORY WORKFLOW" above)
+6. **Update CHANGELOG.md** (See "MANDATORY WORKFLOW" above)
+7. Run tests to verify: `npm test`
+8. Test demo visually: `npm start` → http://localhost:4200
+
+**REMINDER**: Follow the complete checklist in the "MANDATORY WORKFLOW FOR ALL CHANGES" section above.
 
 ### Fixing Type Errors
 

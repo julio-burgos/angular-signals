@@ -1,6 +1,6 @@
 {
   "name": "angular-signals",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Advanced Angular signals library with deep equality checking and physics-based animations",
   "keywords": [
     "angular",

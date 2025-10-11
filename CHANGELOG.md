@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3] - TBD
+
+### Added
+- **State Management Utilities:**
+  - `usePrevious` - Track previous signal value
+  - `useToggle` - Boolean toggle with convenience methods
+  - `useCounter` - Counter with bounds and operations
+  - `useArray` - Array manipulation with immutable operations
+
+- **Async Utilities:**
+  - `useDebounce` - Debounce signal value changes
+  - `useThrottle` - Throttle signal update frequency
+
+- **Timing Utilities:**
+  - `useInterval` - Interval timer with pause/resume/reset
+  - `useTimeout` - Timeout with cancel/reset capabilities
+  - `useNow` - Current timestamp signal with auto-updates
+
+- **Browser APIs:**
+  - `useMediaQuery` - Reactive media query matching
+  - `useEventListener` - Event listener with automatic cleanup
+  - `useLocalStorage` - Sync signal with localStorage
+  - `useSessionStorage` - Sync signal with sessionStorage
+
+- **Documentation:**
+  - Comprehensive API documentation for all utilities
+  - Interactive demo application showcasing all features
+  - AI Agent Guidelines (AGENTS.md) with mandatory workflow for future development
+
+### Changed
+- Enhanced demo application with 16+ interactive examples
+- Updated test suite to 117 tests with 100% passing rate
+- Improved TypeScript type definitions across all utilities
+
 ## [0.0.2] - 2025-10-11
 
 ### Added

@@ -1,6 +1,24 @@
-import { Component, effect } from '@angular/core';
+import { Component, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { deepSignal, deepComputed, spring, tween } from '../../../angular-signals/src/public-api'
+import {
+  deepSignal,
+  deepComputed,
+  spring,
+  tween,
+  usePrevious,
+  useToggle,
+  useCounter,
+  useArray,
+  useDebounce,
+  useThrottle,
+  useInterval,
+  useTimeout,
+  useNow,
+  useMediaQuery,
+  useEventListener,
+  useLocalStorage,
+  useSessionStorage
+} from '../../../angular-signals/src/public-api'
 
 @Component({
   selector: 'app-root',
@@ -40,7 +58,67 @@ export class App {
     easing: (t: number) => t * (2 - t), // ease-out-quad
   });
 
+  // State Management Demos
+  // usePrevious
+  counterForPrevious = signal(0);
+  previousCounter = usePrevious(this.counterForPrevious);
 
+  // useToggle
+  toggleDemo = useToggle(false);
+
+  // useCounter
+  counterDemo = useCounter(0, 0, 10);
+
+  // useArray
+  arrayDemo = useArray<string>(['Apple', 'Banana', 'Cherry']);
+  newItem = signal('');
+
+  // Async Demos
+  // useDebounce
+  searchInput = signal('');
+  debouncedSearch = useDebounce(this.searchInput, { delay: 500 });
+
+  // useThrottle
+  scrollY = signal(0);
+  throttledScrollY = useThrottle(this.scrollY, { delay: 200 });
+
+  // Timing Demos
+  // useInterval
+  intervalDemo = useInterval(() => {
+    console.log('Interval tick');
+  }, 1000);
+
+  // useTimeout
+  timeoutDemo = useTimeout(() => {
+    console.log('Timeout fired!');
+  }, 3000);
+
+  // useNow
+  currentTime = useNow({ interval: 1000 });
+
+  // Browser API Demos
+  // useMediaQuery
+  isMobile = useMediaQuery('(max-width: 768px)');
+  isDesktop = useMediaQuery('(min-width: 1024px)');
+
+  // useLocalStorage & useSessionStorage
+  localStorageDemo = useLocalStorage('demo-key', 'Default value');
+  sessionStorageDemo = useSessionStorage('session-key', 0);
+
+  constructor() {
+    // Setup event listener for window resize
+    useEventListener(window, 'scroll', () => {
+      this.scrollY.set(window.scrollY);
+    });
+
+    // Effect to log debounced search
+    effect(() => {
+      const search = this.debouncedSearch();
+      if (search) {
+        console.log('Debounced search:', search);
+      }
+    });
+  }
 
   // DeepSignal methods
   updateName(name: string) {
@@ -98,5 +176,46 @@ export class App {
     this.tweenDemo.target.set(0);
     this.tweenWithDelay.target.set(0);
     this.tweenPosition.target.set([0, 0]);
+  }
+
+  // State Management Methods
+  incrementCounterForPrevious() {
+    this.counterForPrevious.update(v => v + 1);
+  }
+
+  // Array methods
+  addItem() {
+    const item = this.newItem();
+    if (item.trim()) {
+      this.arrayDemo.push(item);
+      this.newItem.set('');
+    }
+  }
+
+  removeFirstItem() {
+    this.arrayDemo.shift();
+  }
+
+  removeLastItem() {
+    this.arrayDemo.pop();
+  }
+
+  clearArray() {
+    this.arrayDemo.clear();
+  }
+
+  filterByQuery(query: string) {
+    this.arrayDemo.filter((item: string) =>
+      item.toLowerCase().includes(query.toLowerCase())
+    );
+  }
+
+  // Storage methods
+  updateLocalStorage(value: string) {
+    this.localStorageDemo.value.set(value);
+  }
+
+  incrementSessionStorage() {
+    this.sessionStorageDemo.value.update((v: number) => v + 1);
   }
 }

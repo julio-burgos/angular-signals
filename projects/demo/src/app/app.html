@@ -1,11 +1,13 @@
 <div class="container">
   <header>
-    <h1>Angular Signals Demo</h1>
-    <p>Demonstrating deepSignal, deepComputed, spring, and tween</p>
+    <h1>🎯 Angular Signals Library Demo</h1>
+    <p>Comprehensive demonstration of all utilities</p>
   </header>
 
+  <!-- Deep Signal & Computed -->
   <section class="demo-section">
-    <h2>🔵 DeepSignal Demo</h2>
+    <h2>🔵 DeepSignal & DeepComputed</h2>
+    <p class="description">Signals with deep equality checking for nested objects</p>
     <div class="controls">
       <div class="control-group">
         <label>Name:</label>
@@ -21,50 +23,275 @@
       </div>
     </div>
     <div class="output">
-      <h3>Values:</h3>
-      <pre>{{ userProfile() | json }}</pre>
-      <h3>Computed Summary:</h3>
-      <pre>{{ userSummary() | json }}</pre>
+      <div class="output-col">
+        <h4>User Profile:</h4>
+        <pre>{{ userProfile() | json }}</pre>
+      </div>
+      <div class="output-col">
+        <h4>Computed Summary:</h4>
+        <pre>{{ userSummary() | json }}</pre>
+      </div>
     </div>
   </section>
 
+  <!-- State Management -->
   <section class="demo-section">
-    <h2>🌀 Spring Animation</h2>
-    <div class="button-group">
-      <button (click)="animateSpringTo(0)">0</button>
-      <button (click)="animateSpringTo(100)">100</button>
-      <button (click)="animateSpringTo(200)">200</button>
+    <h2>📊 State Management</h2>
+
+    <!-- usePrevious -->
+    <div class="sub-section">
+      <h3>usePrevious</h3>
+      <p class="description">Track previous value of a signal</p>
+      <div class="button-group">
+        <button (click)="incrementCounterForPrevious()">Increment</button>
+        <button (click)="counterForPrevious.set(0)">Reset</button>
+      </div>
+      <div class="value-display">
+        <span>Current: <strong>{{ counterForPrevious() }}</strong></span>
+        <span>Previous: <strong>{{ previousCounter() }}</strong></span>
+      </div>
     </div>
-    <div class="value-display">
-      <span>Target: {{ springDemo.target() }}</span>
-      <span>Current: {{ springDemo.current() | number:'1.2-2' }}</span>
+
+    <!-- useToggle -->
+    <div class="sub-section">
+      <h3>useToggle</h3>
+      <p class="description">Boolean toggle with convenience methods</p>
+      <div class="button-group">
+        <button (click)="toggleDemo.toggle()">Toggle</button>
+        <button (click)="toggleDemo.setTrue()">Set True</button>
+        <button (click)="toggleDemo.setFalse()">Set False</button>
+      </div>
+      <div class="value-display">
+        <span>State: <strong [class.active]="toggleDemo.value()">{{ toggleDemo.value() ? 'ON' : 'OFF' }}</strong></span>
+      </div>
     </div>
-    <div class="progress-bar">
-      <div class="progress-fill spring" [style.width.%]="springDemo.current() / 2"></div>
+
+    <!-- useCounter -->
+    <div class="sub-section">
+      <h3>useCounter</h3>
+      <p class="description">Counter with bounds (0-10)</p>
+      <div class="button-group">
+        <button (click)="counterDemo.decrement()">-1</button>
+        <button (click)="counterDemo.decrement(5)">-5</button>
+        <button (click)="counterDemo.increment()">+1</button>
+        <button (click)="counterDemo.increment(5)">+5</button>
+        <button (click)="counterDemo.reset()">Reset</button>
+      </div>
+      <div class="value-display">
+        <span>Count: <strong>{{ counterDemo.count() }}</strong></span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="counterDemo.count() * 10"></div>
+      </div>
     </div>
-    <div class="canvas">
-      <div class="ball spring-ball" [style.transform]="'translate(' + springPosition.current()[0] + 'px, ' + springPosition.current()[1] + 'px)'"></div>
+
+    <!-- useArray -->
+    <div class="sub-section">
+      <h3>useArray</h3>
+      <p class="description">Array manipulation with immutable operations</p>
+      <div class="controls">
+        <div class="control-group">
+          <input
+            type="text"
+            placeholder="Add new item..."
+            [value]="newItem()"
+            (input)="newItem.set($any($event.target).value)"
+            (keyup.enter)="addItem()" />
+          <button (click)="addItem()">Add</button>
+        </div>
+      </div>
+      <div class="button-group">
+        <button (click)="removeFirstItem()">Remove First</button>
+        <button (click)="removeLastItem()">Remove Last</button>
+        <button (click)="clearArray()">Clear All</button>
+      </div>
+      <div class="array-display">
+        <div class="array-item" *ngFor="let item of arrayDemo.items(); let i = index">
+          <span>{{ i + 1 }}. {{ item }}</span>
+          <button (click)="arrayDemo.remove(i)">×</button>
+        </div>
+        <div *ngIf="arrayDemo.items().length === 0" class="empty-state">
+          No items. Add some above!
+        </div>
+      </div>
     </div>
-    <button class="reset-btn" (click)="resetSpring()">Reset Springs</button>
   </section>
 
+  <!-- Async Utilities -->
   <section class="demo-section">
-    <h2>⏱️ Tween Animation</h2>
-    <div class="button-group">
-      <button (click)="animateTweenTo(0)">0</button>
-      <button (click)="animateTweenTo(100)">100</button>
-      <button (click)="animateTweenTo(200)">200</button>
+    <h2>⏱️ Async Utilities</h2>
+
+    <!-- useDebounce -->
+    <div class="sub-section">
+      <h3>useDebounce</h3>
+      <p class="description">Debounce signal updates (500ms delay)</p>
+      <div class="controls">
+        <div class="control-group">
+          <label>Type to search:</label>
+          <input
+            type="text"
+            placeholder="Type something..."
+            [value]="searchInput()"
+            (input)="searchInput.set($any($event.target).value)" />
+        </div>
+      </div>
+      <div class="value-display">
+        <span>Immediate: <strong>{{ searchInput() || '(empty)' }}</strong></span>
+        <span>Debounced: <strong>{{ debouncedSearch() || '(empty)' }}</strong></span>
+      </div>
     </div>
-    <div class="value-display">
-      <span>Target: {{ tweenDemo.target() }}</span>
-      <span>Current: {{ tweenDemo.current() | number:'1.2-2' }}</span>
+
+    <!-- useThrottle -->
+    <div class="sub-section">
+      <h3>useThrottle</h3>
+      <p class="description">Throttle scroll position updates (200ms)</p>
+      <div class="scroll-demo">
+        <p>Scroll the page to see throttled updates</p>
+        <div class="value-display">
+          <span>Scroll Y: <strong>{{ scrollY() }}</strong></span>
+          <span>Throttled: <strong>{{ throttledScrollY() }}</strong></span>
+        </div>
+      </div>
     </div>
-    <div class="progress-bar">
-      <div class="progress-fill tween" [style.width.%]="tweenDemo.current() / 2"></div>
+  </section>
+
+  <!-- Timing Utilities -->
+  <section class="demo-section">
+    <h2>⏰ Timing Utilities</h2>
+
+    <!-- useInterval -->
+    <div class="sub-section">
+      <h3>useInterval</h3>
+      <p class="description">Interval timer with pause/resume</p>
+      <div class="button-group">
+        <button (click)="intervalDemo.pause()" [disabled]="!intervalDemo.isActive()">Pause</button>
+        <button (click)="intervalDemo.resume()" [disabled]="intervalDemo.isActive()">Resume</button>
+        <button (click)="intervalDemo.reset()">Reset</button>
+      </div>
+      <div class="value-display">
+        <span>Ticks: <strong>{{ intervalDemo.count() }}</strong></span>
+        <span>Status: <strong>{{ intervalDemo.isActive() ? 'Running' : 'Paused' }}</strong></span>
+      </div>
+    </div>
+
+    <!-- useTimeout -->
+    <div class="sub-section">
+      <h3>useTimeout</h3>
+      <p class="description">Timeout with reset capability (3s)</p>
+      <div class="button-group">
+        <button (click)="timeoutDemo.cancel()">Cancel</button>
+        <button (click)="timeoutDemo.reset()">Reset</button>
+      </div>
+      <div class="value-display">
+        <span>Ready: <strong>{{ timeoutDemo.isReady() }}</strong></span>
+        <span>Pending: <strong>{{ timeoutDemo.isPending() }}</strong></span>
+      </div>
+    </div>
+
+    <!-- useNow -->
+    <div class="sub-section">
+      <h3>useNow</h3>
+      <p class="description">Current timestamp updated every second</p>
+      <div class="value-display">
+        <span>Time: <strong>{{ currentTime() | date:'medium' }}</strong></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Browser APIs -->
+  <section class="demo-section">
+    <h2>🌐 Browser APIs</h2>
+
+    <!-- useMediaQuery -->
+    <div class="sub-section">
+      <h3>useMediaQuery</h3>
+      <p class="description">Reactive media query matching</p>
+      <div class="value-display">
+        <span>Mobile (≤768px): <strong [class.active]="isMobile()">{{ isMobile() }}</strong></span>
+        <span>Desktop (≥1024px): <strong [class.active]="isDesktop()">{{ isDesktop() }}</strong></span>
+      </div>
+      <p class="hint">Resize your browser window to see changes</p>
+    </div>
+
+    <!-- Storage -->
+    <div class="sub-section">
+      <h3>useLocalStorage & useSessionStorage</h3>
+      <p class="description">Sync signals with browser storage</p>
+      <div class="controls">
+        <div class="control-group">
+          <label>LocalStorage:</label>
+          <input
+            type="text"
+            [value]="localStorageDemo.value()"
+            (input)="updateLocalStorage($any($event.target).value)" />
+          <button (click)="localStorageDemo.remove()">Clear</button>
+        </div>
+        <div class="control-group">
+          <label>SessionStorage Counter:</label>
+          <button (click)="incrementSessionStorage()">Increment ({{ sessionStorageDemo.value() }})</button>
+          <button (click)="sessionStorageDemo.remove()">Clear</button>
+        </div>
+      </div>
+      <p class="hint">Values persist across page reloads (localStorage) or session (sessionStorage)</p>
+    </div>
+  </section>
+
+  <!-- Animations -->
+  <section class="demo-section">
+    <h2>🌀 Animation Utilities</h2>
+
+    <!-- Spring -->
+    <div class="sub-section">
+      <h3>Spring Animation</h3>
+      <p class="description">Physics-based spring animations</p>
+      <div class="button-group">
+        <button (click)="animateSpringTo(0)">0</button>
+        <button (click)="animateSpringTo(100)">100</button>
+        <button (click)="animateSpringTo(200)">200</button>
+        <button (click)="resetSpring()">Reset</button>
+      </div>
+      <div class="value-display">
+        <span>Target: <strong>{{ springDemo.target() }}</strong></span>
+        <span>Current: <strong>{{ springDemo.current() | number:'1.2-2' }}</strong></span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill spring" [style.width.%]="springDemo.current() / 2"></div>
+      </div>
+      <div class="canvas" (click)="animateSpringPosition($event.offsetX - 25, $event.offsetY - 25)">
+        <div class="ball spring-ball"
+             [style.transform]="'translate(' + springPosition.current()[0] + 'px, ' + springPosition.current()[1] + 'px)'">
+        </div>
+        <p class="hint">Click anywhere to animate the ball</p>
+      </div>
+    </div>
+
+    <!-- Tween -->
+    <div class="sub-section">
+      <h3>Tween Animation</h3>
+      <p class="description">Time-based tween animations with easing</p>
+      <div class="button-group">
+        <button (click)="animateTweenTo(0)">0</button>
+        <button (click)="animateTweenTo(100)">100</button>
+        <button (click)="animateTweenTo(200)">200</button>
+        <button (click)="resetTween()">Reset</button>
+      </div>
+      <div class="value-display">
+        <span>Target: <strong>{{ tweenDemo.target() }}</strong></span>
+        <span>Current: <strong>{{ tweenDemo.current() | number:'1.2-2' }}</strong></span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill tween" [style.width.%]="tweenDemo.current() / 2"></div>
+      </div>
+      <div class="canvas" (click)="animateTweenPosition($event.offsetX - 25, $event.offsetY - 25)">
+        <div class="ball tween-ball"
+             [style.transform]="'translate(' + tweenPosition.current()[0] + 'px, ' + tweenPosition.current()[1] + 'px)'">
+        </div>
+        <p class="hint">Click anywhere to animate the ball with easing</p>
+      </div>
     </div>
   </section>
 
   <footer>
-    <p>Check the console to see reactive updates!</p>
+    <p>Angular Signals Library v0.0.2 - All utilities demonstrated above</p>
   </footer>
 </div>
