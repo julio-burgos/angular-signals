@@ -178,17 +178,17 @@ describe('useArray', () => {
         effectCount++;
       });
 
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectCount).toBe(1);
       expect(lastLength).toBe(2);
 
       arr.push(3);
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectCount).toBe(2);
       expect(lastLength).toBe(3);
 
       arr.clear();
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectCount).toBe(3);
       expect(lastLength).toBe(0);
     });

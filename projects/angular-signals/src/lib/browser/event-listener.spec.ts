@@ -19,7 +19,7 @@ describe('useEventListener', () => {
       const handler = vi.fn();
       useEventListener(window, 'resize', handler);
 
-      TestBed.flushEffects();
+      TestBed.tick();
       window.dispatchEvent(new Event('resize'));
       expect(handler).toHaveBeenCalledTimes(1);
     });
@@ -30,7 +30,7 @@ describe('useEventListener', () => {
       const handler = vi.fn();
       useEventListener(document, 'click', handler);
 
-      TestBed.flushEffects();
+      TestBed.tick();
       document.dispatchEvent(new Event('click'));
       expect(handler).toHaveBeenCalledTimes(1);
     });
@@ -43,7 +43,7 @@ describe('useEventListener', () => {
 
       useEventListener(element, 'click', handler);
 
-      TestBed.flushEffects();
+      TestBed.tick();
       element.click();
       expect(handler).toHaveBeenCalledTimes(1);
     });
@@ -58,12 +58,12 @@ describe('useEventListener', () => {
 
       useEventListener(targetSignal, 'click', handler);
 
-      TestBed.flushEffects();
+      TestBed.tick();
       element1.click();
       expect(handler).toHaveBeenCalledTimes(1);
 
       targetSignal.set(element2);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       element2.click();
       expect(handler).toHaveBeenCalledTimes(2); // Now listening to element2
@@ -90,7 +90,7 @@ describe('useEventListener', () => {
         receivedEvent = event;
       });
 
-      TestBed.flushEffects();
+      TestBed.tick();
       element.click();
 
       expect(receivedEvent).toBeInstanceOf(MouseEvent);

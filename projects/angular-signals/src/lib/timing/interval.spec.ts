@@ -53,20 +53,20 @@ describe('useInterval', () => {
       let callbackCount = 0;
       const interval = useInterval(() => callbackCount++, 100);
 
-      TestBed.flushEffects();
+      TestBed.tick();
       vi.advanceTimersByTime(200);
       expect(callbackCount).toBe(2);
       expect(interval.isActive()).toBe(true);
 
       interval.pause();
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(interval.isActive()).toBe(false);
 
       vi.advanceTimersByTime(200);
       expect(callbackCount).toBe(2); // No change while paused
 
       interval.resume();
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(interval.isActive()).toBe(true);
 
       vi.advanceTimersByTime(100);
@@ -100,12 +100,12 @@ describe('useInterval', () => {
       const delay = signal(100);
       const interval = useInterval(() => callbackCount++, delay);
 
-      TestBed.flushEffects();
+      TestBed.tick();
       vi.advanceTimersByTime(100);
       expect(callbackCount).toBe(1);
 
       delay.set(200);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       vi.advanceTimersByTime(200);
       expect(callbackCount).toBe(2);

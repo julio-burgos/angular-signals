@@ -23,18 +23,18 @@ describe('deepSignal', () => {
         effectSpy(signal());
       });
 
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectSpy).toBeCalledTimes(1);
       expect(effectSpy).toBeCalledWith({ a: 1, b: { c: 2 } });
 
       // Set the same value - should NOT trigger effect due to deep equality
       signal.set({ a: 1, b: { c: 2 } });
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectSpy).toBeCalledTimes(1);
 
       // Set a different value - SHOULD trigger effect
       signal.set({ a: 1, b: { c: 3 } });
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectSpy).toBeCalledTimes(2);
       expect(effectSpy).toBeCalledWith({ a: 1, b: { c: 3 } });
     });
@@ -49,24 +49,24 @@ describe('deepSignal', () => {
         effectSpy(signal());
       });
 
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectSpy).toBeCalledTimes(1);
       expect(effectSpy).toBeCalledWith({ arr: [1, 2, { x: 3 }], obj: { y: 4 } });
 
       // Set the same value - should NOT trigger effect due to deep equality
       signal.set({ arr: [1, 2, { x: 3 }], obj: { y: 4 } });
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectSpy).toBeCalledTimes(1);
 
       // Modify nested object - SHOULD trigger effect
       signal.set({ arr: [1, 2, { x: 5 }], obj: { y: 4 } });
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectSpy).toBeCalledTimes(2);
       expect(effectSpy).toBeCalledWith({ arr: [1, 2, { x: 5 }], obj: { y: 4 } });
 
       // Modify nested array - SHOULD trigger effect
       signal.set({ arr: [1, 2, { x: 5 }, 6], obj: { y: 4 } });
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectSpy).toBeCalledTimes(3);
       expect(effectSpy).toBeCalledWith({ arr: [1, 2, { x: 5 }, 6], obj: { y: 4 } });
     });

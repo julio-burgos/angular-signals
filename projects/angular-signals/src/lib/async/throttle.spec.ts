@@ -30,18 +30,18 @@ describe('useThrottle', () => {
       const source = signal(0);
       const throttled = useThrottle(source, { delay: 100, leading: true });
 
-      TestBed.flushEffects();
+      TestBed.tick();
       source.set(1);
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(throttled()).toBe(1); // Immediately updated (leading)
 
       source.set(2);
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(throttled()).toBe(1); // Throttled (ignored)
 
       vi.advanceTimersByTime(100);
       source.set(3);
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(throttled()).toBe(3); // Updated after delay
     });
   });
@@ -51,13 +51,13 @@ describe('useThrottle', () => {
       const source = signal(0);
       const throttled = useThrottle(source, { delay: 100, leading: false, trailing: true });
 
-      TestBed.flushEffects();
+      TestBed.tick();
       source.set(1);
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(throttled()).toBe(0); // Not updated immediately
 
       vi.advanceTimersByTime(100);
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(throttled()).toBe(1); // Updated after delay
     });
   });

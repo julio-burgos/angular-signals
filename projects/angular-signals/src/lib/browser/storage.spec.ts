@@ -36,7 +36,7 @@ describe('useLocalStorage', () => {
       const storage = useLocalStorage('persist-key', 'initial');
 
       storage.value.set('updated');
-      TestBed.flushEffects();
+      TestBed.tick();
 
       const stored = localStorage.getItem('persist-key');
       expect(stored).toBe(JSON.stringify('updated'));
@@ -48,7 +48,7 @@ describe('useLocalStorage', () => {
       const storage = useLocalStorage('object-key', { count: 0 });
 
       storage.value.set({ count: 42 });
-      TestBed.flushEffects();
+      TestBed.tick();
 
       const stored = localStorage.getItem('object-key');
       expect(JSON.parse(stored!)).toEqual({ count: 42 });
@@ -60,7 +60,7 @@ describe('useLocalStorage', () => {
       const storage = useLocalStorage<number[]>('array-key', []);
 
       storage.value.set([1, 2, 3]);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       const stored = localStorage.getItem('array-key');
       expect(JSON.parse(stored!)).toEqual([1, 2, 3]);
@@ -72,7 +72,7 @@ describe('useLocalStorage', () => {
       const storage = useLocalStorage('remove-key', 'value');
 
       storage.value.set('updated');
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(localStorage.getItem('remove-key')).toBeTruthy();
 
       storage.remove();
@@ -107,7 +107,7 @@ describe('useSessionStorage', () => {
       const storage = useSessionStorage('session-key', 0);
 
       storage.value.set(456);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       const stored = sessionStorage.getItem('session-key');
       expect(stored).toBe(JSON.stringify(456));

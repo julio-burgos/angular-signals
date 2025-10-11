@@ -52,10 +52,10 @@ describe('useTimeout', () => {
       let count = 0;
       const timeout = useTimeout(() => { count++; }, 100);
 
-      TestBed.flushEffects();
+      TestBed.tick();
       vi.advanceTimersByTime(50);
       timeout.reset();
-      TestBed.flushEffects();
+      TestBed.tick();
 
       expect(timeout.isPending()).toBe(true);
       expect(timeout.isReady()).toBe(false);

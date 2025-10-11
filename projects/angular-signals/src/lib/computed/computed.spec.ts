@@ -26,24 +26,24 @@ describe('deepComputed', () => {
         effectSpy(computedSignal());
       });
 
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectSpy).toBeCalledTimes(1);
       expect(effectSpy).toBeCalledWith({ a: 1, b: { c: 2 }, d: 4 });
 
       // Change base signal to a different value - SHOULD trigger effect
       baseSignal.set({ a: 1, b: { c: 3 } });
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectSpy).toBeCalledTimes(2);
       expect(effectSpy).toBeCalledWith({ a: 1, b: { c: 3 }, d: 4 });
 
       // Change base signal to a value that results in the same computed value - should NOT trigger effect
       baseSignal.set({ a: 1, b: { c: 3 } });
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectSpy).toBeCalledTimes(2);
 
       // Change base signal to a different value - SHOULD trigger effect
       baseSignal.set({ a: 2, b: { c: 3 } });
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectSpy).toBeCalledTimes(3);
       expect(effectSpy).toBeCalledWith({ a: 2, b: { c: 3 }, d: 4 });
     });

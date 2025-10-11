@@ -81,17 +81,17 @@ describe('useToggle', () => {
         effectCount++;
       });
 
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectCount).toBe(1);
       expect(lastValue).toBe(false);
 
       toggle.toggle();
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectCount).toBe(2);
       expect(lastValue).toBe(true);
 
       toggle.setFalse();
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectCount).toBe(3);
       expect(lastValue).toBe(false);
     });
@@ -107,19 +107,19 @@ describe('useToggle', () => {
         effectCount++;
       });
 
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectCount).toBe(1);
 
       toggle.setTrue();
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectCount).toBe(1); // No change
 
       toggle.setFalse();
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectCount).toBe(2); // Changed
 
       toggle.setFalse();
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectCount).toBe(2); // No change
     });
   });

@@ -129,12 +129,12 @@ describe('useCounter', () => {
         effectCount++;
       });
 
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectCount).toBe(1);
       expect(lastValue).toBe(0);
 
       counter.increment();
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectCount).toBe(2);
       expect(lastValue).toBe(1);
     });

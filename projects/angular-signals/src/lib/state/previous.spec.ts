@@ -28,9 +28,9 @@ describe('usePrevious', () => {
       const source = signal(0);
       const prev = usePrevious(source);
 
-      TestBed.flushEffects(); // Flush the initial effect
+      TestBed.tick(); // Flush the initial effect
       source.set(1);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       expect(prev()).toBe(0);
     });
@@ -41,17 +41,17 @@ describe('usePrevious', () => {
       const source = signal('a');
       const prev = usePrevious(source);
 
-      TestBed.flushEffects(); // Flush the initial effect
+      TestBed.tick(); // Flush the initial effect
       source.set('b');
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(prev()).toBe('a');
 
       source.set('c');
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(prev()).toBe('b');
 
       source.set('d');
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(prev()).toBe('c');
     });
   });
@@ -61,10 +61,10 @@ describe('usePrevious', () => {
       const source = signal({ count: 0 });
       const prev = usePrevious(source);
 
-      TestBed.flushEffects(); // Flush the initial effect
+      TestBed.tick(); // Flush the initial effect
       const oldValue = source();
       source.set({ count: 1 });
-      TestBed.flushEffects();
+      TestBed.tick();
 
       expect(prev()).toEqual({ count: 0 });
       expect(prev()).toBe(oldValue);
@@ -83,12 +83,12 @@ describe('usePrevious', () => {
         effectRuns++;
       });
 
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectRuns).toBe(1);
       expect(lastPrev).toBeUndefined();
 
       source.set(20);
-      TestBed.flushEffects();
+      TestBed.tick();
       expect(effectRuns).toBe(2);
       expect(lastPrev).toBe(10);
     });
