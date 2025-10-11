@@ -1,12 +1,13 @@
-import 'zone.js';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { effect } from '@angular/core';
+import { effect, provideZonelessChangeDetection } from '@angular/core';
 import { useArray } from './array';
 
 describe('useArray', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
   });
 
   afterEach(() => {
@@ -32,11 +33,9 @@ describe('useArray', () => {
       const arr = useArray([1, 2]);
 
       arr.push(3);
-      TestBed.tick();
       expect(arr.items()).toEqual([1, 2, 3]);
 
       arr.push(4, 5);
-      TestBed.tick();
       expect(arr.items()).toEqual([1, 2, 3, 4, 5]);
     });
   });
@@ -46,12 +45,10 @@ describe('useArray', () => {
       const arr = useArray([1, 2, 3]);
 
       const popped = arr.pop();
-      TestBed.tick();
       expect(popped).toBe(3);
       expect(arr.items()).toEqual([1, 2]);
 
       arr.pop();
-      TestBed.tick();
       expect(arr.items()).toEqual([1]);
     });
   });
@@ -70,7 +67,6 @@ describe('useArray', () => {
       const arr = useArray([1, 2, 3]);
 
       const shifted = arr.shift();
-      TestBed.tick();
       expect(shifted).toBe(1);
       expect(arr.items()).toEqual([2, 3]);
     });
@@ -89,11 +85,9 @@ describe('useArray', () => {
       const arr = useArray([2, 3]);
 
       arr.unshift(1);
-      TestBed.tick();
       expect(arr.items()).toEqual([1, 2, 3]);
 
       arr.unshift(-1, 0);
-      TestBed.tick();
       expect(arr.items()).toEqual([-1, 0, 1, 2, 3]);
     });
   });
@@ -103,7 +97,6 @@ describe('useArray', () => {
       const arr = useArray([1, 2, 3, 4, 5]);
 
       arr.filter(x => x % 2 === 0);
-      TestBed.tick();
       expect(arr.items()).toEqual([2, 4]);
     });
   });
@@ -113,7 +106,6 @@ describe('useArray', () => {
       const arr = useArray([1, 2, 3]);
 
       arr.map(x => x * 2);
-      TestBed.tick();
       expect(arr.items()).toEqual([2, 4, 6]);
     });
   });
@@ -123,7 +115,6 @@ describe('useArray', () => {
       const arr = useArray([1, 2, 3]);
 
       arr.clear();
-      TestBed.tick();
       expect(arr.items()).toEqual([]);
     });
   });
@@ -133,11 +124,9 @@ describe('useArray', () => {
       const arr = useArray([1, 2, 3, 4]);
 
       arr.remove(1);
-      TestBed.tick();
       expect(arr.items()).toEqual([1, 3, 4]);
 
       arr.remove(0);
-      TestBed.tick();
       expect(arr.items()).toEqual([3, 4]);
     });
   });
@@ -147,7 +136,6 @@ describe('useArray', () => {
       const arr = useArray([1, 2, 3]);
 
       arr.set([4, 5, 6]);
-      TestBed.tick();
       expect(arr.items()).toEqual([4, 5, 6]);
     });
   });
@@ -160,7 +148,6 @@ describe('useArray', () => {
       ]);
 
       arr.push({ id: 3, name: 'Charlie' });
-      TestBed.tick();
       expect(arr.items().length).toBe(3);
 
       const found = arr.find((item: any) => item.id === 2);
@@ -191,17 +178,17 @@ describe('useArray', () => {
         effectCount++;
       });
 
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(1);
       expect(lastLength).toBe(2);
 
       arr.push(3);
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(2);
       expect(lastLength).toBe(3);
 
       arr.clear();
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(3);
       expect(lastLength).toBe(0);
     });
@@ -213,7 +200,6 @@ describe('useArray', () => {
       const original = arr.items();
 
       arr.push(4);
-      TestBed.tick();
 
       expect(arr.items()).not.toBe(original);
       expect(original).toEqual([1, 2, 3]);

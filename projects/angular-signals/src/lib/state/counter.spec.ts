@@ -1,12 +1,13 @@
-import 'zone.js';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { effect } from '@angular/core';
+import { effect, provideZonelessChangeDetection } from '@angular/core';
 import { useCounter } from './counter';
 
 describe('useCounter', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
   });
 
   afterEach(() => {
@@ -27,11 +28,9 @@ describe('useCounter', () => {
     const counter = useCounter(5);
 
     counter.increment();
-    TestBed.tick();
     expect(counter.count()).toBe(6);
 
     counter.increment();
-    TestBed.tick();
     expect(counter.count()).toBe(7);
   });
 
@@ -39,11 +38,9 @@ describe('useCounter', () => {
     const counter = useCounter(0);
 
     counter.increment(5);
-    TestBed.tick();
     expect(counter.count()).toBe(5);
 
     counter.increment(10);
-    TestBed.tick();
     expect(counter.count()).toBe(15);
   });
 
@@ -51,11 +48,9 @@ describe('useCounter', () => {
     const counter = useCounter(5);
 
     counter.decrement();
-    TestBed.tick();
     expect(counter.count()).toBe(4);
 
     counter.decrement();
-    TestBed.tick();
     expect(counter.count()).toBe(3);
   });
 
@@ -63,11 +58,9 @@ describe('useCounter', () => {
     const counter = useCounter(20);
 
     counter.decrement(5);
-    TestBed.tick();
     expect(counter.count()).toBe(15);
 
     counter.decrement(10);
-    TestBed.tick();
     expect(counter.count()).toBe(5);
   });
 
@@ -75,11 +68,9 @@ describe('useCounter', () => {
     const counter = useCounter(10);
 
     counter.increment(5);
-    TestBed.tick();
     expect(counter.count()).toBe(15);
 
     counter.reset();
-    TestBed.tick();
     expect(counter.count()).toBe(10);
   });
 
@@ -87,10 +78,8 @@ describe('useCounter', () => {
     const counter = useCounter(10);
 
     counter.increment(5);
-    TestBed.tick();
 
     counter.reset(0);
-    TestBed.tick();
     expect(counter.count()).toBe(0);
   });
 
@@ -98,7 +87,6 @@ describe('useCounter', () => {
     const counter = useCounter(0);
 
     counter.set(100);
-    TestBed.tick();
     expect(counter.count()).toBe(100);
   });
 
@@ -106,11 +94,9 @@ describe('useCounter', () => {
     const counter = useCounter(5, 0, 10);
 
     counter.decrement(10);
-    TestBed.tick();
     expect(counter.count()).toBe(0);
 
     counter.set(-5);
-    TestBed.tick();
     expect(counter.count()).toBe(0);
   });
 
@@ -118,11 +104,9 @@ describe('useCounter', () => {
     const counter = useCounter(5, 0, 10);
 
     counter.increment(10);
-    TestBed.tick();
     expect(counter.count()).toBe(10);
 
     counter.set(20);
-    TestBed.tick();
     expect(counter.count()).toBe(10);
   });
 
@@ -145,12 +129,12 @@ describe('useCounter', () => {
         effectCount++;
       });
 
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(1);
       expect(lastValue).toBe(0);
 
       counter.increment();
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(2);
       expect(lastValue).toBe(1);
     });

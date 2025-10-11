@@ -98,7 +98,7 @@ projects/angular-signals/src/
 
 ### Framework
 - **Vitest 3.2.4** with globals enabled
-- **zone.js** for Angular change detection
+- **zoneless** for Angular change detection
 - **TestBed** for Angular component testing
 
 ### Critical Testing Patterns

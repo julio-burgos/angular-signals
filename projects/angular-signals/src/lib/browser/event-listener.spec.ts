@@ -1,12 +1,13 @@
-import 'zone.js';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
+import { signal, provideZonelessChangeDetection } from '@angular/core';
 import { useEventListener } from './event-listener';
 
 describe('useEventListener', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
   });
 
   afterEach(() => {
@@ -18,8 +19,7 @@ describe('useEventListener', () => {
       const handler = vi.fn();
       useEventListener(window, 'resize', handler);
 
-      TestBed.tick();
-
+      TestBed.flushEffects();
       window.dispatchEvent(new Event('resize'));
       expect(handler).toHaveBeenCalledTimes(1);
     });
@@ -30,8 +30,7 @@ describe('useEventListener', () => {
       const handler = vi.fn();
       useEventListener(document, 'click', handler);
 
-      TestBed.tick();
-
+      TestBed.flushEffects();
       document.dispatchEvent(new Event('click'));
       expect(handler).toHaveBeenCalledTimes(1);
     });
@@ -43,8 +42,8 @@ describe('useEventListener', () => {
       const handler = vi.fn();
 
       useEventListener(element, 'click', handler);
-      TestBed.tick();
 
+      TestBed.flushEffects();
       element.click();
       expect(handler).toHaveBeenCalledTimes(1);
     });
@@ -58,13 +57,13 @@ describe('useEventListener', () => {
       const handler = vi.fn();
 
       useEventListener(targetSignal, 'click', handler);
-      TestBed.tick();
 
+      TestBed.flushEffects();
       element1.click();
       expect(handler).toHaveBeenCalledTimes(1);
 
       targetSignal.set(element2);
-      TestBed.tick();
+      TestBed.flushEffects();
 
       element2.click();
       expect(handler).toHaveBeenCalledTimes(2); // Now listening to element2
@@ -78,7 +77,6 @@ describe('useEventListener', () => {
 
       expect(() => {
         useEventListener(targetSignal, 'click', handler);
-        TestBed.tick();
       }).not.toThrow();
     });
   });
@@ -92,8 +90,7 @@ describe('useEventListener', () => {
         receivedEvent = event;
       });
 
-      TestBed.tick();
-
+      TestBed.flushEffects();
       element.click();
 
       expect(receivedEvent).toBeInstanceOf(MouseEvent);

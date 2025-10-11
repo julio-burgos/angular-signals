@@ -1,12 +1,13 @@
-import 'zone.js';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
+import { signal, provideZonelessChangeDetection } from '@angular/core';
 import { useTimeout } from './timeout';
 
 describe('useTimeout', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
     vi.useFakeTimers();
   });
 
@@ -20,7 +21,6 @@ describe('useTimeout', () => {
       let executed = false;
       const timeout = useTimeout(() => { executed = true; }, 100);
 
-      TestBed.tick();
       expect(timeout.isPending()).toBe(true);
       expect(timeout.isReady()).toBe(false);
       expect(executed).toBe(false);
@@ -37,10 +37,8 @@ describe('useTimeout', () => {
       let executed = false;
       const timeout = useTimeout(() => { executed = true; }, 100);
 
-      TestBed.tick();
 
       timeout.cancel();
-      TestBed.tick();
       expect(timeout.isPending()).toBe(false);
 
       vi.advanceTimersByTime(100);
@@ -54,11 +52,10 @@ describe('useTimeout', () => {
       let count = 0;
       const timeout = useTimeout(() => { count++; }, 100);
 
-      TestBed.tick();
-
+      TestBed.flushEffects();
       vi.advanceTimersByTime(50);
       timeout.reset();
-      TestBed.tick();
+      TestBed.flushEffects();
 
       expect(timeout.isPending()).toBe(true);
       expect(timeout.isReady()).toBe(false);
@@ -78,10 +75,8 @@ describe('useTimeout', () => {
       const delay = signal(100);
       const timeout = useTimeout(() => { executed = true; }, delay);
 
-      TestBed.tick();
 
       delay.set(200);
-      TestBed.tick();
 
       vi.advanceTimersByTime(100);
       expect(executed).toBe(false); // Old delay cancelled
@@ -96,15 +91,11 @@ describe('useTimeout', () => {
       let count = 0;
       const timeout = useTimeout(() => { count++; }, 100);
 
-      TestBed.tick();
 
       timeout.cancel();
-      TestBed.tick();
 
       timeout.reset();
-      TestBed.tick();
       timeout.cancel();
-      TestBed.tick();
 
       vi.advanceTimersByTime(200);
       expect(count).toBe(0);

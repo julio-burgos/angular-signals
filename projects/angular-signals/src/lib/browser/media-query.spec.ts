@@ -1,14 +1,15 @@
-import 'zone.js';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
+import { signal, provideZonelessChangeDetection } from '@angular/core';
 import { useMediaQuery } from './media-query';
 
 describe('useMediaQuery', () => {
   let mockMatchMedia: any;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
 
     // Mock matchMedia
     mockMatchMedia = vi.fn((query: string) => ({
@@ -34,7 +35,6 @@ describe('useMediaQuery', () => {
   it('should initialize with current match state', () => {
     TestBed.runInInjectionContext(() => {
       const matches = useMediaQuery('(min-width: 768px)');
-      TestBed.tick();
 
       expect(typeof matches()).toBe('boolean');
     });
@@ -45,11 +45,9 @@ describe('useMediaQuery', () => {
       const query = signal('(min-width: 768px)');
       const matches = useMediaQuery(query);
 
-      TestBed.tick();
       expect(typeof matches()).toBe('boolean');
 
       query.set('(max-width: 480px)');
-      TestBed.tick();
       expect(typeof matches()).toBe('boolean');
     });
   });
@@ -58,7 +56,6 @@ describe('useMediaQuery', () => {
     TestBed.runInInjectionContext(() => {
       // In test environment, window is available but this tests the guard
       const matches = useMediaQuery('(min-width: 1024px)');
-      TestBed.tick();
 
       expect(typeof matches()).toBe('boolean');
     });

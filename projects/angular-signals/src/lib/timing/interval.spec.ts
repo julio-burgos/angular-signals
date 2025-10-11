@@ -1,12 +1,13 @@
-import 'zone.js';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
+import { signal, provideZonelessChangeDetection } from '@angular/core';
 import { useInterval } from './interval';
 
 describe('useInterval', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
     vi.useFakeTimers();
   });
 
@@ -20,7 +21,6 @@ describe('useInterval', () => {
       let callbackCount = 0;
       const interval = useInterval(() => callbackCount++, 100);
 
-      TestBed.tick();
       expect(callbackCount).toBe(0);
 
       vi.advanceTimersByTime(100);
@@ -38,7 +38,6 @@ describe('useInterval', () => {
     TestBed.runInInjectionContext(() => {
       const interval = useInterval(() => {}, 100);
 
-      TestBed.tick();
       expect(interval.count()).toBe(0);
 
       vi.advanceTimersByTime(100);
@@ -54,21 +53,20 @@ describe('useInterval', () => {
       let callbackCount = 0;
       const interval = useInterval(() => callbackCount++, 100);
 
-      TestBed.tick();
-
+      TestBed.flushEffects();
       vi.advanceTimersByTime(200);
       expect(callbackCount).toBe(2);
       expect(interval.isActive()).toBe(true);
 
       interval.pause();
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(interval.isActive()).toBe(false);
 
       vi.advanceTimersByTime(200);
       expect(callbackCount).toBe(2); // No change while paused
 
       interval.resume();
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(interval.isActive()).toBe(true);
 
       vi.advanceTimersByTime(100);
@@ -81,16 +79,13 @@ describe('useInterval', () => {
       let callbackCount = 0;
       const interval = useInterval(() => callbackCount++, 100);
 
-      TestBed.tick();
 
       vi.advanceTimersByTime(300);
       expect(interval.count()).toBe(3);
 
       interval.pause();
-      TestBed.tick();
 
       interval.reset();
-      TestBed.tick();
       expect(interval.count()).toBe(0);
       expect(interval.isActive()).toBe(true);
 
@@ -105,13 +100,12 @@ describe('useInterval', () => {
       const delay = signal(100);
       const interval = useInterval(() => callbackCount++, delay);
 
-      TestBed.tick();
-
+      TestBed.flushEffects();
       vi.advanceTimersByTime(100);
       expect(callbackCount).toBe(1);
 
       delay.set(200);
-      TestBed.tick();
+      TestBed.flushEffects();
 
       vi.advanceTimersByTime(200);
       expect(callbackCount).toBe(2);

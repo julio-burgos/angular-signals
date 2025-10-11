@@ -1,12 +1,13 @@
-import 'zone.js';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { signal, effect } from '@angular/core';
+import { signal, effect, provideZonelessChangeDetection } from '@angular/core';
 import { useDebounce } from './debounce';
 
 describe('useDebounce', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
     vi.useFakeTimers();
   });
 
@@ -29,16 +30,16 @@ describe('useDebounce', () => {
       const source = signal(0);
       const debounced = useDebounce(source, { delay: 100 });
 
-      TestBed.tick();
-
+      TestBed.flushEffects();
       source.set(1);
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(debounced()).toBe(0); // Not updated yet
 
       vi.advanceTimersByTime(50);
       expect(debounced()).toBe(0); // Still not updated
 
       vi.advanceTimersByTime(50);
+      TestBed.flushEffects();
       expect(debounced()).toBe(1); // Now updated
     });
   });
@@ -48,19 +49,19 @@ describe('useDebounce', () => {
       const source = signal(0);
       const debounced = useDebounce(source, { delay: 100 });
 
-      TestBed.tick();
-
+      TestBed.flushEffects();
       source.set(1);
-      TestBed.tick();
+      TestBed.flushEffects();
       vi.advanceTimersByTime(50);
 
       source.set(2);
-      TestBed.tick();
+      TestBed.flushEffects();
       vi.advanceTimersByTime(50);
 
       expect(debounced()).toBe(0); // Not updated
 
       vi.advanceTimersByTime(50);
+      TestBed.flushEffects();
       expect(debounced()).toBe(2); // Updated to last value
     });
   });
@@ -70,13 +71,13 @@ describe('useDebounce', () => {
       const source = signal(0);
       const debounced = useDebounce(source, { delay: 100, leading: true });
 
-      TestBed.tick();
-
+      TestBed.flushEffects();
       source.set(1);
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(debounced()).toBe(1); // Immediately updated
 
       vi.advanceTimersByTime(100);
+      TestBed.flushEffects();
       expect(debounced()).toBe(1); // Still same value
     });
   });
@@ -86,13 +87,13 @@ describe('useDebounce', () => {
       const source = signal(0);
       const debounced = useDebounce(source, { delay: 100, leading: false, trailing: true });
 
-      TestBed.tick();
-
+      TestBed.flushEffects();
       source.set(1);
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(debounced()).toBe(0); // Not updated
 
       vi.advanceTimersByTime(100);
+      TestBed.flushEffects();
       expect(debounced()).toBe(1); // Updated after delay
     });
   });
@@ -108,15 +109,15 @@ describe('useDebounce', () => {
         effectCount++;
       });
 
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(1);
 
       source.set(1);
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(1); // Not triggered yet
 
       vi.advanceTimersByTime(100);
-      TestBed.tick(); // Flush effects after timer
+      TestBed.flushEffects(); // Flush effects after timer
       expect(effectCount).toBe(2); // Triggered after delay
     });
   });

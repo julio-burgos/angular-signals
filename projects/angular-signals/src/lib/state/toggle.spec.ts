@@ -1,12 +1,13 @@
-import 'zone.js';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { effect } from '@angular/core';
+import { effect, provideZonelessChangeDetection } from '@angular/core';
 import { useToggle } from './toggle';
 
 describe('useToggle', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
   });
 
   afterEach(() => {
@@ -35,15 +36,12 @@ describe('useToggle', () => {
       const toggle = useToggle(false);
 
       toggle.toggle();
-      TestBed.tick();
       expect(toggle.value()).toBe(true);
 
       toggle.toggle();
-      TestBed.tick();
       expect(toggle.value()).toBe(false);
 
       toggle.toggle();
-      TestBed.tick();
       expect(toggle.value()).toBe(true);
     });
   });
@@ -53,11 +51,9 @@ describe('useToggle', () => {
       const toggle = useToggle(false);
 
       toggle.setTrue();
-      TestBed.tick();
       expect(toggle.value()).toBe(true);
 
       toggle.setTrue();
-      TestBed.tick();
       expect(toggle.value()).toBe(true);
     });
   });
@@ -67,11 +63,9 @@ describe('useToggle', () => {
       const toggle = useToggle(true);
 
       toggle.setFalse();
-      TestBed.tick();
       expect(toggle.value()).toBe(false);
 
       toggle.setFalse();
-      TestBed.tick();
       expect(toggle.value()).toBe(false);
     });
   });
@@ -87,17 +81,17 @@ describe('useToggle', () => {
         effectCount++;
       });
 
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(1);
       expect(lastValue).toBe(false);
 
       toggle.toggle();
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(2);
       expect(lastValue).toBe(true);
 
       toggle.setFalse();
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(3);
       expect(lastValue).toBe(false);
     });
@@ -113,19 +107,19 @@ describe('useToggle', () => {
         effectCount++;
       });
 
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(1);
 
       toggle.setTrue();
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(1); // No change
 
       toggle.setFalse();
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(2); // Changed
 
       toggle.setFalse();
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectCount).toBe(2); // No change
     });
   });

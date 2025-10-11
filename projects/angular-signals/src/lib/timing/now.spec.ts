@@ -1,11 +1,13 @@
-import 'zone.js';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { useNow } from './now';
 
 describe('useNow', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
     vi.useFakeTimers();
   });
 
@@ -30,7 +32,6 @@ describe('useNow', () => {
       vi.setSystemTime(baseTime);
 
       const now = useNow();
-      TestBed.tick();
 
       const firstTime = now().getTime();
 
@@ -45,7 +46,6 @@ describe('useNow', () => {
       vi.setSystemTime(baseTime);
 
       const now = useNow({ interval: 500 });
-      TestBed.tick();
 
       const firstTime = now().getTime();
 
@@ -60,7 +60,6 @@ describe('useNow', () => {
       vi.setSystemTime(baseTime);
 
       const now = useNow({ interval: 100 });
-      TestBed.tick();
 
       const times: number[] = [now().getTime()];
 

@@ -1,12 +1,13 @@
-import 'zone.js';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
+import { signal, provideZonelessChangeDetection } from '@angular/core';
 import { useThrottle } from './throttle';
 
 describe('useThrottle', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
     vi.useFakeTimers();
   });
 
@@ -29,19 +30,18 @@ describe('useThrottle', () => {
       const source = signal(0);
       const throttled = useThrottle(source, { delay: 100, leading: true });
 
-      TestBed.tick();
-
+      TestBed.flushEffects();
       source.set(1);
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(throttled()).toBe(1); // Immediately updated (leading)
 
       source.set(2);
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(throttled()).toBe(1); // Throttled (ignored)
 
       vi.advanceTimersByTime(100);
       source.set(3);
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(throttled()).toBe(3); // Updated after delay
     });
   });
@@ -51,13 +51,13 @@ describe('useThrottle', () => {
       const source = signal(0);
       const throttled = useThrottle(source, { delay: 100, leading: false, trailing: true });
 
-      TestBed.tick();
-
+      TestBed.flushEffects();
       source.set(1);
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(throttled()).toBe(0); // Not updated immediately
 
       vi.advanceTimersByTime(100);
+      TestBed.flushEffects();
       expect(throttled()).toBe(1); // Updated after delay
     });
   });
@@ -67,12 +67,10 @@ describe('useThrottle', () => {
       const source = signal(0);
       const throttled = useThrottle(source, { delay: 100, leading: true });
 
-      TestBed.tick();
 
       // Rapid updates
       for (let i = 1; i <= 10; i++) {
         source.set(i);
-        TestBed.tick();
         vi.advanceTimersByTime(20);
       }
 

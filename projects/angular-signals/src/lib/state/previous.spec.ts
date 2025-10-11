@@ -1,12 +1,13 @@
-import 'zone.js';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { signal, effect } from '@angular/core';
+import { signal, effect, provideZonelessChangeDetection } from '@angular/core';
 import { usePrevious } from './previous';
 
 describe('usePrevious', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
   });
 
   afterEach(() => {
@@ -27,10 +28,9 @@ describe('usePrevious', () => {
       const source = signal(0);
       const prev = usePrevious(source);
 
-      TestBed.tick();
-
+      TestBed.flushEffects(); // Flush the initial effect
       source.set(1);
-      TestBed.tick();
+      TestBed.flushEffects();
 
       expect(prev()).toBe(0);
     });
@@ -41,18 +41,17 @@ describe('usePrevious', () => {
       const source = signal('a');
       const prev = usePrevious(source);
 
-      TestBed.tick();
-
+      TestBed.flushEffects(); // Flush the initial effect
       source.set('b');
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(prev()).toBe('a');
 
       source.set('c');
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(prev()).toBe('b');
 
       source.set('d');
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(prev()).toBe('c');
     });
   });
@@ -62,11 +61,10 @@ describe('usePrevious', () => {
       const source = signal({ count: 0 });
       const prev = usePrevious(source);
 
-      TestBed.tick();
-
+      TestBed.flushEffects(); // Flush the initial effect
       const oldValue = source();
       source.set({ count: 1 });
-      TestBed.tick();
+      TestBed.flushEffects();
 
       expect(prev()).toEqual({ count: 0 });
       expect(prev()).toBe(oldValue);
@@ -85,12 +83,12 @@ describe('usePrevious', () => {
         effectRuns++;
       });
 
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectRuns).toBe(1);
       expect(lastPrev).toBeUndefined();
 
       source.set(20);
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(effectRuns).toBe(2);
       expect(lastPrev).toBe(10);
     });

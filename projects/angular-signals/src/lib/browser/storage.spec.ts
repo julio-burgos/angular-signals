@@ -1,11 +1,13 @@
-import 'zone.js';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { useLocalStorage, useSessionStorage } from './storage';
 
 describe('useLocalStorage', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
     localStorage.clear();
   });
 
@@ -34,7 +36,7 @@ describe('useLocalStorage', () => {
       const storage = useLocalStorage('persist-key', 'initial');
 
       storage.value.set('updated');
-      TestBed.tick();
+      TestBed.flushEffects();
 
       const stored = localStorage.getItem('persist-key');
       expect(stored).toBe(JSON.stringify('updated'));
@@ -46,7 +48,7 @@ describe('useLocalStorage', () => {
       const storage = useLocalStorage('object-key', { count: 0 });
 
       storage.value.set({ count: 42 });
-      TestBed.tick();
+      TestBed.flushEffects();
 
       const stored = localStorage.getItem('object-key');
       expect(JSON.parse(stored!)).toEqual({ count: 42 });
@@ -58,7 +60,7 @@ describe('useLocalStorage', () => {
       const storage = useLocalStorage<number[]>('array-key', []);
 
       storage.value.set([1, 2, 3]);
-      TestBed.tick();
+      TestBed.flushEffects();
 
       const stored = localStorage.getItem('array-key');
       expect(JSON.parse(stored!)).toEqual([1, 2, 3]);
@@ -70,7 +72,7 @@ describe('useLocalStorage', () => {
       const storage = useLocalStorage('remove-key', 'value');
 
       storage.value.set('updated');
-      TestBed.tick();
+      TestBed.flushEffects();
       expect(localStorage.getItem('remove-key')).toBeTruthy();
 
       storage.remove();
@@ -82,7 +84,9 @@ describe('useLocalStorage', () => {
 
 describe('useSessionStorage', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
     sessionStorage.clear();
   });
 
@@ -103,7 +107,7 @@ describe('useSessionStorage', () => {
       const storage = useSessionStorage('session-key', 0);
 
       storage.value.set(456);
-      TestBed.tick();
+      TestBed.flushEffects();
 
       const stored = sessionStorage.getItem('session-key');
       expect(stored).toBe(JSON.stringify(456));
@@ -115,7 +119,6 @@ describe('useSessionStorage', () => {
       const storage = useSessionStorage('remove-session-key', 'initial');
 
       storage.value.set('updated');
-      TestBed.tick();
 
       storage.remove();
       expect(sessionStorage.getItem('remove-session-key')).toBeNull();

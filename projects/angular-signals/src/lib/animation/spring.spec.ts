@@ -1,9 +1,19 @@
-import 'zone.js';
 import { TestBed } from '@angular/core/testing';
-import { describe, it, expect, vi } from 'vitest';
+import { provideZonelessChangeDetection } from '@angular/core';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { spring } from './spring';
 
 describe('spring', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
+  });
+
+  afterEach(() => {
+    TestBed.resetTestingModule();
+  });
+
   it('should create spring signals with initial number value', () => {
     TestBed.runInInjectionContext(() => {
       const { current, target } = spring(0);
@@ -27,7 +37,6 @@ describe('spring', () => {
       const { current, target } = spring(10);
 
       target.set(20);
-      TestBed.tick();
 
       expect(target()).toBe(20);
       expect(current()).toBe(10); // Should start at initial value
@@ -43,7 +52,6 @@ describe('spring', () => {
       });
 
       target.set(100);
-      TestBed.tick();
 
       // Give some time for animation frames
       return new Promise<void>((resolve) => {

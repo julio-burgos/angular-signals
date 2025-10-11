@@ -1,9 +1,19 @@
-import 'zone.js';
 import { TestBed } from '@angular/core/testing';
-import { describe, it, expect } from 'vitest';
+import { provideZonelessChangeDetection } from '@angular/core';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { tween } from './tween';
 
 describe('tween', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()]
+    });
+  });
+
+  afterEach(() => {
+    TestBed.resetTestingModule();
+  });
+
   it('should create tween signals with initial number value', () => {
     TestBed.runInInjectionContext(() => {
       const { current, target } = tween(0, { duration: 1000 });
@@ -27,7 +37,6 @@ describe('tween', () => {
       const { current, target } = tween(0, { duration: 1000 });
 
       target.set(100);
-      TestBed.tick();
 
       return new Promise<void>((resolve) => {
         // Check at 25% of duration
