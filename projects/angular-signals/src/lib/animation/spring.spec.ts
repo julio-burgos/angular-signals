@@ -27,7 +27,7 @@ describe('spring', () => {
       const { current, target } = spring(10);
 
       target.set(20);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       expect(target()).toBe(20);
       expect(current()).toBe(10); // Should start at initial value
@@ -43,7 +43,7 @@ describe('spring', () => {
       });
 
       target.set(100);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       // Give some time for animation frames
       return new Promise<void>((resolve) => {
@@ -67,7 +67,7 @@ describe('spring', () => {
       });
 
       target.set([100, 50]);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       return new Promise<void>((resolve) => {
         setTimeout(() => {
@@ -92,7 +92,7 @@ describe('spring', () => {
       });
 
       target.set(100);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       return new Promise<void>((resolve) => {
         setTimeout(() => {
@@ -112,7 +112,7 @@ describe('spring', () => {
       });
 
       target.set([100, 50]);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       return new Promise<void>((resolve) => {
         setTimeout(() => {
@@ -133,7 +133,7 @@ describe('spring', () => {
 
       expect(current()).toBe(0);
       target.set(100);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       expect(typeof current()).toBe('number');
     });
@@ -145,7 +145,7 @@ describe('spring', () => {
 
       expect(current()).toBe(0);
       target.set(50);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       expect(typeof current()).toBe('number');
     });
@@ -169,13 +169,13 @@ describe('spring', () => {
       });
 
       target.set(100);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       return new Promise<void>((resolve) => {
         setTimeout(() => {
           // Change target mid-animation
           target.set(50);
-          TestBed.flushEffects();
+          TestBed.tick();
 
           setTimeout(() => {
             const finalValue = current();
@@ -196,7 +196,7 @@ describe('spring', () => {
       });
 
       target.set(-100);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       return new Promise<void>((resolve) => {
         setTimeout(() => {
@@ -219,7 +219,7 @@ describe('spring', () => {
 
       target3D.set([10, 20, 30]);
       target2D.set([40, 50]);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       expect(target3D()).toEqual([10, 20, 30]);
       expect(target2D()).toEqual([40, 50]);
@@ -231,7 +231,7 @@ describe('spring', () => {
       const { current, target } = spring(50);
 
       target.set(50); // Same as current
-      TestBed.flushEffects();
+      TestBed.tick();
 
       expect(current()).toBe(50);
     });
@@ -247,7 +247,7 @@ describe('spring', () => {
 
       // Change target
       target.set(100);
-      TestBed.flushEffects();
+      TestBed.tick();
 
       // Verify target was updated
       expect(target()).toBe(100);

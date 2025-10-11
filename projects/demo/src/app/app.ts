@@ -1,6 +1,6 @@
 import { Component, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { deepSignal, deepComputed, spring, tween } from 'angular-signals';
+import { deepSignal, deepComputed, spring, tween } from '../../../angular-signals/src/public-api'
 
 @Component({
   selector: 'app-root',

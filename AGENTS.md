@@ -60,7 +60,7 @@ projects/angular-signals/src/
 
 ```typescript
 // Effect testing requires manual flushing
-TestBed.flushEffects(); // Call after setting signals
+TestBed.tick(); // Call after setting signals
 
 // Example from signal.spec.ts
 it('should trigger effect when value changes', () => {
@@ -72,10 +72,10 @@ it('should trigger effect when value changes', () => {
     effectCount++;
   });
   
-  TestBed.flushEffects(); // Required!
+  TestBed.tick(); // Required!
   
   s.set({ count: 1 });
-  TestBed.flushEffects(); // Required after each change!
+  TestBed.tick(); // Required after each change!
   
   expect(effectCount).toBe(2);
 });
@@ -206,7 +206,7 @@ npm run build -- angular-signals
 ### For Agents Working on This Project
 
 1. **Always run tests after changes**: `npm test`
-2. **Use TestBed.flushEffects()** when testing effects
+2. **Use TestBed.tick()** when testing effects
 3. **Maintain function overloads** for number/array types
 4. **Follow curried function pattern** for higher-order functions
 5. **Clean up subscriptions** in effect cleanup functions
@@ -243,7 +243,7 @@ npm run build -- angular-signals
 ## Troubleshooting
 
 ### "Effect not running" in tests
-**Solution**: Call `TestBed.flushEffects()` after signal changes
+**Solution**: Call `TestBed.tick()` after signal changes
 
 ### Type errors with interpolation
 **Solution**: Ensure curried syntax `(from, to) => (t) => value`
