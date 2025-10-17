@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@nx-signals/angular-signals": ["packages/angular-signals/src/index.ts"]
+      "@angular-signals/angular-signals": ["packages/angular-signals/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

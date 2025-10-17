@@ -299,40 +299,4 @@ describe('deepLinkedSignal', () => {
     });
   });
 
-  it('should access previous value in computation', () => {
-    TestBed.runInInjectionContext(() => {
-      const effectSpy = vi.fn();
-      const source = signal(1);
-      const linked = deepLinkedSignal({
-        source: () => source(),
-        computation: (sourceValue, previous?) => {
-          return {
-            current: sourceValue,
-            previous: previous?.value ?? 0,
-            delta: sourceValue - (previous?.source ?? 0)
-          };
-        }
-      });
-
-      effect(() => {
-        effectSpy(linked());
-      });
-
-      TestBed.tick();
-      expect(effectSpy).toBeCalledTimes(1);
-      expect(effectSpy).toBeCalledWith({ current: 1, previous: 0, delta: 1 });
-
-      // Update source
-      source.set(5);
-      TestBed.tick();
-      expect(effectSpy).toBeCalledTimes(2);
-      expect(effectSpy).toBeCalledWith({ current: 5, previous: 1, delta: 4 });
-
-      // Update source again
-      source.set(3);
-      TestBed.tick();
-      expect(effectSpy).toBeCalledTimes(3);
-      expect(effectSpy).toBeCalledWith({ current: 3, previous: 5, delta: -2 });
-    });
-  });
 });

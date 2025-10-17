@@ -1,25 +1,25 @@
 {
-  "name": "nx-signals",
+  "name": "demo",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "apps/nx-signals/src",
+  "sourceRoot": "apps/demo/src",
   "tags": [],
   "targets": {
     "build": {
       "executor": "@angular/build:application",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/nx-signals",
-        "browser": "apps/nx-signals/src/main.ts",
-        "tsConfig": "apps/nx-signals/tsconfig.app.json",
+        "outputPath": "dist/apps/demo",
+        "browser": "apps/demo/src/main.ts",
+        "tsConfig": "apps/demo/tsconfig.app.json",
         "assets": [
           {
             "glob": "**/*",
-            "input": "apps/nx-signals/public"
+            "input": "apps/demo/public"
           }
         ],
-        "styles": ["apps/nx-signals/src/styles.css"]
+        "styles": ["apps/demo/src/styles.css"]
       },
       "configurations": {
         "production": {
@@ -50,10 +50,10 @@
       "executor": "@angular/build:dev-server",
       "configurations": {
         "production": {
-          "buildTarget": "nx-signals:build:production"
+          "buildTarget": "demo:build:production"
         },
         "development": {
-          "buildTarget": "nx-signals:build:development"
+          "buildTarget": "demo:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -61,7 +61,7 @@
     "extract-i18n": {
       "executor": "@angular/build:extract-i18n",
       "options": {
-        "buildTarget": "nx-signals:build"
+        "buildTarget": "demo:build"
       }
     },
     "lint": {
@@ -71,8 +71,8 @@
       "continuous": true,
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "nx-signals:build",
-        "staticFilePath": "dist/apps/nx-signals/browser",
+        "buildTarget": "demo:build",
+        "staticFilePath": "dist/apps/demo/browser",
         "spa": true
       }
     }

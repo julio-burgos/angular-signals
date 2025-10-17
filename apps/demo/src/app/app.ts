@@ -18,7 +18,7 @@ import {
   useEventListener,
   useLocalStorage,
   useSessionStorage
-} from '@nx-signals/angular-signals'
+} from '@angular-signals/angular-signals'
 
 @Component({
   selector: 'app-root',
