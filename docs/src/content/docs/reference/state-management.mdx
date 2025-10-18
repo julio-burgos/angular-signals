@@ -1,0 +1,125 @@
+---
+title: State Management
+description: API reference for state management utilities in Angular Signals
+---
+
+# State Management
+
+## `usePrevious<T>(source: Signal<T>): Signal<T | undefined>`
+
+Creates a signal that tracks the previous value of another signal.
+
+**Parameters:**
+- `source: Signal<T>` - The signal to track
+
+**Returns:** `Signal<T | undefined>` - A signal containing the previous value (undefined on first read)
+
+**Example:**
+```ts
+import { usePrevious, signal } from '@angular-signals/angular-signals';
+
+const count = signal(0);
+const prevCount = usePrevious(count);
+
+console.log(prevCount()); // undefined
+count.set(1);
+console.log(prevCount()); // 0
+count.set(2);
+console.log(prevCount()); // 1
+```
+
+## `useToggle(initial?: boolean): ToggleReturn`
+
+Creates a boolean signal with convenient toggle methods.
+
+**Parameters:**
+- `initial?: boolean` - Initial boolean value (default: false)
+
+**Returns:** `ToggleReturn` - Object with value signal and toggle methods:
+- `value: Signal<boolean>` - The current boolean value
+- `toggle(): void` - Toggle the value
+- `setTrue(): void` - Set value to true
+- `setFalse(): void` - Set value to false
+
+**Example:**
+```ts
+import { useToggle } from '@angular-signals/angular-signals';
+
+const modal = useToggle(false);
+
+console.log(modal.value()); // false
+modal.toggle();
+console.log(modal.value()); // true
+modal.setFalse();
+console.log(modal.value()); // false
+```
+
+## `useCounter(initial?: number, min?: number, max?: number): CounterReturn`
+
+Creates a counter signal with increment/decrement methods and optional bounds.
+
+**Parameters:**
+- `initial?: number` - Initial count value (default: 0)
+- `min?: number` - Minimum allowed value (default: -Infinity)
+- `max?: number` - Maximum allowed value (default: Infinity)
+
+**Returns:** `CounterReturn` - Object with count signal and manipulation methods:
+- `count: Signal<number>` - The current count value
+- `increment(step?: number): void` - Increment the counter by step (default: 1)
+- `decrement(step?: number): void` - Decrement the counter by step (default: 1)
+- `reset(value?: number): void` - Reset the counter to initial or specified value
+- `set(value: number): void` - Set the counter to a specific value
+
+**Example:**
+```ts
+import { useCounter } from '@angular-signals/angular-signals';
+
+const counter = useCounter(0, 0, 10);
+
+console.log(counter.count()); // 0
+counter.increment();
+console.log(counter.count()); // 1
+counter.increment(5);
+console.log(counter.count()); // 6
+counter.increment(10); // Would go to 16, but clamped to max
+console.log(counter.count()); // 10
+counter.reset();
+console.log(counter.count()); // 0
+```
+
+## `useArray<T>(initial?: T[]): ArrayReturn<T>`
+
+Creates an array signal with convenient manipulation methods. All operations return new arrays (immutable).
+
+**Parameters:**
+- `initial?: T[]` - Initial array value (default: [])
+
+**Returns:** `ArrayReturn<T>` - Object with items signal and array manipulation methods:
+- `items: Signal<readonly T[]>` - The current array value
+- `push(...items: T[]): void` - Add items to the end of the array
+- `pop(): T | undefined` - Remove and return the last item
+- `shift(): T | undefined` - Remove and return the first item
+- `unshift(...items: T[]): void` - Add items to the beginning of the array
+- `filter(predicate: (item: T, index: number) => boolean): void` - Filter items based on predicate
+- `map<U>(fn: (item: T, index: number) => U): void` - Map items to new values
+- `clear(): void` - Remove all items
+- `remove(index: number): void` - Remove item at specific index
+- `insert(index: number, item: T): void` - Insert item at specific index
+- `set(items: T[]): void` - Replace the entire array
+- `find(predicate: (item: T) => boolean): T | undefined` - Find first item matching predicate
+- `findIndex(predicate: (item: T) => boolean): number` - Find index of first item matching predicate
+
+**Example:**
+```ts
+import { useArray } from '@angular-signals/angular-signals';
+
+const todos = useArray<string>(['Buy milk', 'Walk dog']);
+
+console.log(todos.items()); // ['Buy milk', 'Walk dog']
+todos.push('Clean room');
+console.log(todos.items()); // ['Buy milk', 'Walk dog', 'Clean room']
+todos.remove(0);
+console.log(todos.items()); // ['Walk dog', 'Clean room']
+todos.clear();
+console.log(todos.items()); // []
+```

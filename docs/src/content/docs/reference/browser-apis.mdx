@@ -1,0 +1,139 @@
+---
+title: Browser APIs
+description: API reference for browser API utilities in Angular Signals
+---
+
+# Browser APIs
+
+## `useMediaQuery(query: string | Signal<string>): Signal<boolean>`
+
+Creates a signal that tracks whether a CSS media query matches.
+
+**Parameters:**
+- `query: string | Signal<string>` - CSS media query string or signal of query
+
+**Returns:** `Signal<boolean>` - A signal indicating if the media query matches
+
+**Example:**
+```ts
+import { useMediaQuery } from '@angular-signals/angular-signals';
+
+const isMobile = useMediaQuery('(max-width: 768px)');
+const isDark = useMediaQuery('(prefers-color-scheme: dark)');
+
+effect(() => {
+  console.log('Is mobile:', isMobile());
+  console.log('Dark mode:', isDark());
+});
+```
+
+## `useEventListener(target, event, handler, options?)`
+
+Attaches an event listener to a target with automatic cleanup.
+
+**Parameters:**
+- `target: Window | Document | HTMLElement | Signal<HTMLElement | null>` - Event target
+- `event: string` - Event name
+- `handler: (event: Event) => void` - Event handler function
+- `options?: AddEventListenerOptions` - AddEventListener options
+
+**Example:**
+```ts
+import { useEventListener } from '@angular-signals/angular-signals';
+
+// Listen to window resize
+useEventListener(window, 'resize', () => {
+  console.log('Window resized');
+});
+
+// Listen to element clicks
+const button = signal<HTMLElement | null>(null);
+useEventListener(button, 'click', (event) => {
+  console.log('Button clicked', event);
+});
+```
+
+## `useLocalStorage<T>(key: string, initialValue: T): StorageReturn<T>`
+
+Creates a signal synced with localStorage.
+
+**Parameters:**
+- `key: string` - Storage key
+- `initialValue: T` - Initial value if key doesn't exist
+
+**Returns:** `StorageReturn<T>` - Object with value signal and remove method:
+- `value: WritableSignal<T>` - The stored value
+- `remove(): void` - Remove the value from storage
+
+**Example:**
+```ts
+import { useLocalStorage } from '@angular-signals/angular-signals';
+
+const theme = useLocalStorage('theme', 'light');
+
+theme.value.set('dark'); // Persists to localStorage
+console.log(theme.value()); // 'dark'
+theme.remove(); // Removes from localStorage
+```
+
+## `useSessionStorage<T>(key: string, initialValue: T): StorageReturn<T>`
+
+Creates a signal synced with sessionStorage. Note: sessionStorage is unique to each browser tab/window, so changes are not synchronized across tabs.
+
+**Parameters:**
+- `key: string` - Storage key
+- `initialValue: T` - Initial value if key doesn't exist
+
+**Returns:** `StorageReturn<T>` - Object with value signal and remove method
+
+**Example:**
+```ts
+import { useSessionStorage } from '@angular-signals/angular-signals';
+
+const sessionData = useSessionStorage('user', { name: 'Guest' });
+
+sessionData.value.set({ name: 'John' }); // Persists to sessionStorage
+```
+
+## `watchLocalStorageKey<T>(key: string): Signal<T | undefined>`
+
+Creates a signal that watches for changes to a specific localStorage key.
+
+**Parameters:**
+- `key: string` - localStorage key to watch
+
+**Returns:** `Signal<T | undefined>` - A signal containing the current value of the localStorage key
+
+**Example:**
+```ts
+import { watchLocalStorageKey } from '@angular-signals/angular-signals';
+
+const userPrefs = watchLocalStorageKey('user-preferences');
+
+effect(() => {
+  const prefs = userPrefs();
+  if (prefs) {
+    applyPreferences(prefs);
+  }
+});
+```
+
+## `watchSessionStorageKey<T>(key: string): Signal<T | undefined>`
+
+Creates a signal that watches for changes to a specific sessionStorage key. Note: sessionStorage is unique to each browser tab/window, so this signal will not update when the key changes in other tabs.
+
+**Parameters:**
+- `key: string` - sessionStorage key to watch
+
+**Returns:** `Signal<T | undefined>` - A signal containing the current value of the sessionStorage key
+
+**Example:**
+```ts
+import { watchSessionStorageKey } from '@angular-signals/angular-signals';
+
+const sessionData = watchSessionStorageKey('temp-data');
+
+effect(() => {
+  console.log('Session data:', sessionData());
+});
+```

@@ -1,0 +1,46 @@
+---
+title: Signal Utilities
+description: API reference for signal utilities in Angular Signals
+---
+
+# Signal Utilities
+
+## `deepSignal<T>(value: T, options?: CreateSignalOptions<T>): WritableSignal<T>`
+
+Creates a signal with deep equality checking using lodash's `isEqual` function.
+
+**Parameters:**
+- `value: T` - Initial value for the signal
+- `options?: CreateSignalOptions<T>` - Optional Angular signal options
+
+**Returns:** `WritableSignal<T>` - A writable signal that uses deep equality comparison
+
+**Example:**
+```ts
+import { deepSignal } from '@angular-signals/angular-signals';
+
+const user = deepSignal({ name: 'John', age: 30 });
+user.set({ name: 'John', age: 30 }); // No update (deep equal)
+user.set({ name: 'Jane', age: 30 }); // Triggers update
+```
+
+## `deepComputed<T>(computation: () => T, options?: CreateComputedOptions<T>): Signal<T>`
+
+Creates a computed signal with deep equality checking.
+
+**Parameters:**
+- `computation: () => T` - Function that computes the value
+- `options?: CreateComputedOptions<T>` - Optional Angular computed options
+
+**Returns:** `Signal<T>` - A read-only signal with deep equality
+
+**Example:**
+```ts
+import { deepComputed, deepSignal } from '@angular-signals/angular-signals';
+
+const user = deepSignal({ name: 'John', age: 30 });
+const displayName = deepComputed(() => `${user().name} (${user().age})`);
+
+console.log(displayName()); // "John (30)"
+user.set({ name: 'John', age: 30 }); // No update (deep equal)
+```

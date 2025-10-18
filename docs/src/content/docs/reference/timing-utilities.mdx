@@ -1,0 +1,87 @@
+---
+title: Timing Utilities
+description: API reference for timing utilities in Angular Signals
+---
+
+# Timing Utilities
+
+## `useInterval(callback: () => void, delay: number | Signal<number>): IntervalReturn`
+
+Creates an interval that executes a callback repeatedly with pause/resume control.
+
+**Parameters:**
+- `callback: () => void` - Function to execute on each interval
+- `delay: number | Signal<number>` - Delay in milliseconds (or signal of delay)
+
+**Returns:** `IntervalReturn` - Object with control methods and state signals:
+- `count: Signal<number>` - Number of times the interval has executed
+- `isActive: Signal<boolean>` - Whether the interval is currently active
+- `pause(): void` - Pause the interval
+- `resume(): void` - Resume the interval
+- `reset(): void` - Reset the count and restart the interval
+
+**Example:**
+```ts
+import { useInterval } from '@angular-signals/angular-signals';
+
+const timer = useInterval(() => {
+  console.log('Tick');
+}, 1000);
+
+console.log(timer.count()); // Number of ticks
+timer.pause(); // Pause the interval
+timer.resume(); // Resume the interval
+timer.reset(); // Reset count and restart
+```
+
+## `useTimeout(callback: () => void, delay: number | Signal<number>): TimeoutReturn`
+
+Creates a timeout that executes a callback after a delay with cancel/reset control.
+
+**Parameters:**
+- `callback: () => void` - Function to execute after timeout
+- `delay: number | Signal<number>` - Delay in milliseconds (or signal of delay)
+
+**Returns:** `TimeoutReturn` - Object with control methods and state signals:
+- `isReady: Signal<boolean>` - Whether the timeout has completed
+- `isPending: Signal<boolean>` - Whether the timeout is currently pending
+- `cancel(): void` - Cancel the timeout
+- `reset(): void` - Reset and restart the timeout
+
+**Example:**
+```ts
+import { useTimeout } from '@angular-signals/angular-signals';
+
+const timeout = useTimeout(() => {
+  console.log('Timeout completed!');
+}, 3000);
+
+// Cancel the timeout
+timeout.cancel();
+
+// Reset and restart
+timeout.reset();
+```
+
+## `useNow(options?: NowOptions): Signal<Date>`
+
+Creates a signal that contains the current Date, updating at a specified interval.
+
+**Parameters:**
+- `options?: NowOptions` - Configuration options
+
+**NowOptions:**
+- `interval?: number` - Update interval in milliseconds (default: 1000)
+
+**Returns:** `Signal<Date>` - A signal containing the current Date
+
+**Example:**
+```ts
+import { useNow } from '@angular-signals/angular-signals';
+
+const now = useNow({ interval: 1000 });
+
+effect(() => {
+  console.log('Current time:', now().toLocaleTimeString());
+});
+```

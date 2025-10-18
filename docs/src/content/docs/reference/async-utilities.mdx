@@ -1,0 +1,58 @@
+---
+title: Async Utilities
+description: API reference for async utilities in Angular Signals
+---
+
+# Async Utilities
+
+## `useDebounce<T>(source: Signal<T>, options: DebounceOptions): Signal<T>`
+
+Creates a debounced version of a signal that delays updates.
+
+**Parameters:**
+- `source: Signal<T>` - The signal to debounce
+- `options: DebounceOptions` - Debounce configuration
+
+**DebounceOptions:**
+- `delay: number` - Delay in milliseconds
+- `leading?: boolean` - Execute on the leading edge (default: false)
+- `trailing?: boolean` - Execute on the trailing edge (default: true)
+
+**Returns:** `Signal<T>` - A debounced signal
+
+**Example:**
+```ts
+import { useDebounce, signal } from '@angular-signals/angular-signals';
+
+const search = signal('');
+const debouncedSearch = useDebounce(search, { delay: 300 });
+
+// search updates immediately
+search.set('hello');
+// debouncedSearch updates after 300ms delay
+```
+
+## `useThrottle<T>(source: Signal<T>, options: ThrottleOptions): Signal<T>`
+
+Creates a throttled version of a signal that limits update frequency.
+
+**Parameters:**
+- `source: Signal<T>` - The signal to throttle
+- `options: ThrottleOptions` - Throttle configuration
+
+**ThrottleOptions:**
+- `delay: number` - Delay in milliseconds
+- `leading?: boolean` - Execute on the leading edge (default: true)
+- `trailing?: boolean` - Execute on the trailing edge (default: false)
+
+**Returns:** `Signal<T>` - A throttled signal
+
+**Example:**
+```ts
+import { useThrottle, signal } from '@angular-signals/angular-signals';
+
+const scrollY = signal(0);
+const throttledScrollY = useThrottle(scrollY, { delay: 100 });
+
+// scrollY updates frequently, but throttledScrollY updates at most once per 100ms
+```

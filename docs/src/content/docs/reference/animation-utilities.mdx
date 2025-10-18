@@ -1,0 +1,73 @@
+---
+title: Animation Utilities
+description: API reference for animation utilities in Angular Signals
+---
+
+# Animation Utilities
+
+## `spring(initialValue: number, config?: SpringConfig): SpringSignals<number>`
+## `spring(initialValue: number[], config?: SpringConfig): SpringSignals<number[]>`
+
+Creates a physics-based spring animation that smoothly interpolates between values.
+
+**Parameters:**
+- `initialValue: number | number[]` - The initial value (number or array of numbers)
+- `config?: SpringConfig` - Spring configuration with stiffness, damping, and precision
+
+**SpringConfig:**
+- `stiffness?: number` - Spring stiffness (default: 0.15)
+- `damping?: number` - Spring damping (default: 0.8)
+- `precision?: number` - Animation precision threshold (default: 0.01)
+
+**Returns:** `SpringSignals<T>` - Object with `current` (readonly signal) and `target` (writable signal)
+
+**Example:**
+```ts
+import { spring } from '@angular-signals/angular-signals';
+
+const { current, target } = spring(0, { stiffness: 0.15, damping: 0.8 });
+
+// Update target to animate
+target.set(100);
+
+// Read current animated value
+console.log(current());
+```
+
+## `tween(initialValue: number, options: TweenOptions<number>): TweenSignals<number>`
+## `tween(initialValue: number[], options: TweenOptions<number[]>): TweenSignals<number[]>`
+
+Creates a time-based tween animation with easing curves.
+
+**Parameters:**
+- `initialValue: number | number[]` - The initial value (number or array of numbers)
+- `options: TweenOptions<T>` - Tween configuration
+
+**TweenOptions:**
+- `duration: number` - Animation duration in milliseconds
+- `delay?: number` - Delay before animation starts (default: 0)
+- `easing?: (t: number) => number` - Easing function (default: linear)
+- `interpolate?: InterpolateFunction<T>` - Custom interpolation function
+
+**Returns:** `TweenSignals<T>` - Object with `current` (readonly signal) and `target` (writable signal)
+
+**Example:**
+```ts
+import { tween } from '@angular-signals/angular-signals';
+
+// Basic usage
+const { current, target } = tween(0, {
+  duration: 1000,
+  delay: 500,
+  easing: (t) => t * t
+});
+
+// With custom interpolation
+const { current, target } = tween(0, {
+  duration: 1000,
+  interpolate: (from, to) => (t) => from + (to - from) * t
+});
+
+// Update target to animate
+target.set(100);
+```
