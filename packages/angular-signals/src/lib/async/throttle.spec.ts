@@ -1,18 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { signal, provideZonelessChangeDetection } from '@angular/core';
+import { signal } from '@angular/core';
 import { useThrottle } from './throttle';
 
 describe('useThrottle', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()]
-    });
     vi.useFakeTimers();
   });
 
   afterEach(() => {
-    TestBed.resetTestingModule();
     vi.useRealTimers();
   });
 

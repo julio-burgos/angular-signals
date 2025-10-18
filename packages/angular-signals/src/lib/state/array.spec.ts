@@ -1,19 +1,9 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { effect, provideZonelessChangeDetection } from '@angular/core';
+import { effect } from '@angular/core';
 import { useArray } from './array';
 
 describe('useArray', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()]
-    });
-  });
-
-  afterEach(() => {
-    TestBed.resetTestingModule();
-  });
-
   it('should initialize with empty array by default', () => {
     TestBed.runInInjectionContext(() => {
       const arr = useArray<number>();

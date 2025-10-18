@@ -1,18 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
 import { useLocalStorage, useSessionStorage } from './storage';
 
 describe('useLocalStorage', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()]
-    });
     localStorage.clear();
   });
 
   afterEach(() => {
-    TestBed.resetTestingModule();
     localStorage.clear();
   });
 
@@ -84,14 +79,10 @@ describe('useLocalStorage', () => {
 
 describe('useSessionStorage', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()]
-    });
     sessionStorage.clear();
   });
 
   afterEach(() => {
-    TestBed.resetTestingModule();
     sessionStorage.clear();
   });
 

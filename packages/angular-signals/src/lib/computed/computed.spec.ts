@@ -1,19 +1,9 @@
-import { effect, signal, provideZonelessChangeDetection } from "@angular/core";
+import { effect, signal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
-import { expect, it, describe, vi, beforeEach, afterEach } from 'vitest';
+import { expect, it, describe, vi } from 'vitest';
 import { deepComputed } from './computed';
 
 describe('deepComputed', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()]
-    });
-  });
-
-  afterEach(() => {
-    TestBed.resetTestingModule();
-  });
-
   it('should create a deep computed signal with deep equality check', () => {
     TestBed.runInInjectionContext(() => {
       const effectSpy = vi.fn();

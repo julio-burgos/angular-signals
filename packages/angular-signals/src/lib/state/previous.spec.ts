@@ -1,19 +1,9 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { signal, effect, provideZonelessChangeDetection } from '@angular/core';
+import { signal, effect } from '@angular/core';
 import { usePrevious } from './previous';
 
 describe('usePrevious', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()]
-    });
-  });
-
-  afterEach(() => {
-    TestBed.resetTestingModule();
-  });
-
   it('should return undefined initially', () => {
     TestBed.runInInjectionContext(() => {
       const source = signal(0);

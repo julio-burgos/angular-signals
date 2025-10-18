@@ -1,18 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
 import { useNow } from './now';
 
 describe('useNow', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()]
-    });
     vi.useFakeTimers();
   });
 
   afterEach(() => {
-    TestBed.resetTestingModule();
     vi.useRealTimers();
   });
 

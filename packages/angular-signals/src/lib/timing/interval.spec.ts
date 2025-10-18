@@ -1,18 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { signal, provideZonelessChangeDetection } from '@angular/core';
+import { signal } from '@angular/core';
 import { useInterval } from './interval';
 
 describe('useInterval', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()]
-    });
     vi.useFakeTimers();
   });
 
   afterEach(() => {
-    TestBed.resetTestingModule();
     vi.useRealTimers();
   });
 
@@ -36,7 +32,9 @@ describe('useInterval', () => {
 
   it('should track execution count', () => {
     TestBed.runInInjectionContext(() => {
-      const interval = useInterval(() => {}, 100);
+      const interval = useInterval(() => {
+        // no-op
+      }, 100);
 
       expect(interval.count()).toBe(0);
 

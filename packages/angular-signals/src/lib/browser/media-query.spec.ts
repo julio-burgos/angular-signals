@@ -1,16 +1,12 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { signal, provideZonelessChangeDetection } from '@angular/core';
+import { signal } from '@angular/core';
 import { useMediaQuery } from './media-query';
 
 describe('useMediaQuery', () => {
   let mockMatchMedia: any;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()]
-    });
-
     // Mock matchMedia
     mockMatchMedia = vi.fn((query: string) => ({
       matches: query.includes('min-width'),
@@ -26,10 +22,6 @@ describe('useMediaQuery', () => {
       writable: true,
       value: mockMatchMedia,
     });
-  });
-
-  afterEach(() => {
-    TestBed.resetTestingModule();
   });
 
   it('should initialize with current match state', () => {

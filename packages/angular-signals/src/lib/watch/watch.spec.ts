@@ -1,18 +1,10 @@
-import { provideZonelessChangeDetection, signal } from '@angular/core';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { watch } from './watch';
 
 describe('watch', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()]
-    });
-  });
 
-  afterEach(() => {
-    TestBed.resetTestingModule();
-  });
 
   it('should call callback when a dependency signal changes', () => {
     TestBed.runInInjectionContext(() => {
