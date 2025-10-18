@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.3] - TBD
+### Changed
+- **Browser Storage:** `useSessionStorage` and `watchSessionStorageKey` no longer synchronize across browser tabs since sessionStorage is unique to each tab/window
 
 ### Added
 - **State Management Utilities:**
@@ -30,6 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `useEventListener` - Event listener with automatic cleanup
   - `useLocalStorage` - Sync signal with localStorage
   - `useSessionStorage` - Sync signal with sessionStorage
+
+- **Browser API Utilities:**
+  - `watchStorageKey` - Watch specific storage keys for changes from other tabs/windows
+  - `watchLocalStorageKey` - Watch localStorage keys with Angular signals
+  - `watchSessionStorageKey` - Watch sessionStorage keys with Angular signals
 
 - **Documentation:**
   - Comprehensive API documentation for all utilities

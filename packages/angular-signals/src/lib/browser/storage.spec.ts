@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { useLocalStorage, useSessionStorage } from './storage';
+import { useLocalStorage, useSessionStorage, watchLocalStorageKey, watchSessionStorageKey } from './storage';
 
 describe('useLocalStorage', () => {
   beforeEach(() => {
@@ -113,6 +113,67 @@ describe('useSessionStorage', () => {
 
       storage.remove();
       expect(sessionStorage.getItem('remove-session-key')).toBeNull();
+    });
+  });
+});
+
+describe('watchLocalStorageKey', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  it('should watch localStorage key changes', () => {
+    TestBed.runInInjectionContext(() => {
+      const watcher = watchLocalStorageKey('watch-key');
+      expect(watcher()).toBeUndefined();
+
+      // Ensure effect runs
+      TestBed.tick();
+
+      localStorage.setItem('watch-key', JSON.stringify(42));
+
+      const event = new StorageEvent('storage', {
+        key: 'watch-key',
+        newValue: JSON.stringify(42),
+        storageArea: localStorage,
+      });
+
+      window.dispatchEvent(event);
+      TestBed.tick();
+
+      expect(watcher()).toBe(42);
+    });
+  });
+});
+
+describe('watchSessionStorageKey', () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
+  });
+
+  it('should watch sessionStorage key changes', () => {
+    TestBed.runInInjectionContext(() => {
+      const watcher = watchSessionStorageKey('session-watch-key');
+      expect(watcher()).toBeUndefined();
+
+      // Set value directly (simulating same-tab changes)
+      sessionStorage.setItem('session-watch-key', JSON.stringify('session-value'));
+
+      // Since sessionStorage doesn't sync across tabs, the watcher should not update
+      // from storage events. It only reads the initial value.
+      expect(watcher()).toBeUndefined();
+
+      // However, if we create a new watcher after setting the value, it should read the new value
+      const newWatcher = watchSessionStorageKey('session-watch-key');
+      expect(newWatcher()).toBe('session-value');
     });
   });
 });

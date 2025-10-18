@@ -234,6 +234,24 @@
       </div>
       <p class="hint">Values persist across page reloads (localStorage) or session (sessionStorage)</p>
     </div>
+
+    <!-- Watch Storage -->
+    <div class="sub-section">
+      <h3>watchLocalStorageKey</h3>
+      <p class="description">Watch specific localStorage keys for changes from other tabs/windows</p>
+      <div class="controls">
+        <div class="control-group">
+          <label>Watched LocalStorage:</label>
+          <input
+            type="text"
+            placeholder="Update to see changes"
+            (input)="updateWatchedLocalStorage($any($event.target).value)" />
+          <span class="value-display">Value: {{ watchedLocalStorage() || 'undefined' }}</span>
+          <button (click)="clearWatchedLocalStorage()">Clear</button>
+        </div>
+      </div>
+      <p class="hint">Open this page in another tab and modify values to see real-time updates</p>
+    </div>
   </section>
 
   <!-- Animations -->

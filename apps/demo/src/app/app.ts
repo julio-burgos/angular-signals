@@ -17,7 +17,8 @@ import {
   useMediaQuery,
   useEventListener,
   useLocalStorage,
-  useSessionStorage
+  useSessionStorage,
+  watchLocalStorageKey
 } from '@angular-signals/angular-signals'
 
 @Component({
@@ -104,6 +105,9 @@ export class App {
   // useLocalStorage & useSessionStorage
   localStorageDemo = useLocalStorage('demo-key', 'Default value');
   sessionStorageDemo = useSessionStorage('session-key', 0);
+
+  // watchLocalStorageKey
+  watchedLocalStorage = watchLocalStorageKey('watched-key');
 
   constructor() {
     // Setup event listener for window resize
@@ -217,5 +221,14 @@ export class App {
 
   incrementSessionStorage() {
     this.sessionStorageDemo.value.update((v: number) => v + 1);
+  }
+
+  // Watch storage methods
+  updateWatchedLocalStorage(value: string) {
+    localStorage.setItem('watched-key', JSON.stringify(value));
+  }
+
+  clearWatchedLocalStorage() {
+    localStorage.removeItem('watched-key');
   }
 }
