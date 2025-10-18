@@ -68,7 +68,7 @@ header p {
   margin-bottom: 1rem;
 }
 
-.control-group label {
+.control-group span {
   min-width: 80px;
   font-weight: 600;
   color: #555;

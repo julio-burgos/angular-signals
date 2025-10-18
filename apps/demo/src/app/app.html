@@ -10,15 +10,15 @@
     <p class="description">Signals with deep equality checking for nested objects</p>
     <div class="controls">
       <div class="control-group">
-        <label>Name:</label>
+        <span>Name:</span>
         <input type="text" [value]="userProfile().name" (input)="updateName($any($event.target).value)" />
       </div>
       <div class="control-group">
-        <label>Age:</label>
+        <span>Age:</span>
         <input type="number" [value]="userProfile().age" (input)="updateAge(+$any($event.target).value)" />
       </div>
       <div class="control-group">
-        <label>City:</label>
+        <span>City:</span>
         <input type="text" [value]="userProfile().address.city" (input)="updateCity($any($event.target).value)" />
       </div>
     </div>
@@ -127,7 +127,7 @@
       <p class="description">Debounce signal updates (500ms delay)</p>
       <div class="controls">
         <div class="control-group">
-          <label>Type to search:</label>
+          <span>Type to search:</span>
           <input
             type="text"
             placeholder="Type something..."
@@ -219,7 +219,7 @@
       <p class="description">Sync signals with browser storage</p>
       <div class="controls">
         <div class="control-group">
-          <label>LocalStorage:</label>
+          <span>LocalStorage:</span>
           <input
             type="text"
             [value]="localStorageDemo.value()"
@@ -227,7 +227,7 @@
           <button (click)="localStorageDemo.remove()">Clear</button>
         </div>
         <div class="control-group">
-          <label>SessionStorage Counter:</label>
+          <span>SessionStorage Counter:</span>
           <button (click)="incrementSessionStorage()">Increment ({{ sessionStorageDemo.value() }})</button>
           <button (click)="sessionStorageDemo.remove()">Clear</button>
         </div>
@@ -241,7 +241,7 @@
       <p class="description">Watch specific localStorage keys for changes from other tabs/windows</p>
       <div class="controls">
         <div class="control-group">
-          <label>Watched LocalStorage:</label>
+          <span>Watched LocalStorage:</span>
           <input
             type="text"
             placeholder="Update to see changes"
