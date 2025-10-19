@@ -1,82 +1,68 @@
-# NxSignals
+# Angular Signals
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+A TypeScript library that extends Angular's signals API with additional utilities for reactive programming.
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+## ✨ Features
 
-## Finish your CI setup
+- **Deep Equality Signals** - Signals that use deep equality comparison instead of reference equality
+- **Animation Utilities** - Physics-based spring animations and time-based tween animations with easing
+- **State Management** - Counter, toggle, array, and previous value signals
+- **Async Utilities** - Debounce and throttle signals
+- **Timing Utilities** - Interval, timeout, and now signals
+- **Browser APIs** - Media query, event listener, and storage signals
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/pQqtDTlCc6)
+## 🚀 Installation
 
-
-## Run tasks
-
-To run the dev server for your app, use:
-
-```sh
-npx nx serve angular-signals
+```bash
+npm install @angular-signals/angular-signals
 ```
 
-To create a production bundle:
+## 📖 Quick Start
 
-```sh
-npx nx build angular-signals
+```typescript
+import { deepSignal, spring, useCounter } from '@angular-signals/angular-signals';
+
+// Deep equality signal
+const user = deepSignal({ name: 'John', age: 30 });
+
+// Spring animation
+const position = spring(0, { stiffness: 0.15, damping: 0.8 });
+position.target.set(100);
+
+// Counter with methods
+const counter = useCounter(0);
+counter.increment(); // count becomes 1
 ```
 
-To see all available targets to run for a project, run:
+## 🎮 Demo
 
-```sh
-npx nx show project angular-signals
+Try the interactive demo to see all utilities in action:
+
+```bash
+npm start
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+Then open [http://localhost:4200](http://localhost:4200) in your browser.
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## 📚 Documentation
 
-## Add new projects
+- [Full API Reference](./packages/angular-signals/README.md)
+- [Documentation Site](https://angular-signals.dev) (coming soon)
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+## 🏗️ Project Structure
 
-Use the plugin's generator to create new projects.
+This is a monorepo containing:
 
-To generate a new application, use:
+- `packages/angular-signals/` - Main library package
+- `apps/demo/` - Interactive demo application
+- `docs/` - Documentation site (Astro + Starlight)
 
-```sh
-npx nx g @nx/angular:app demo
-```
+## 🤝 Contributing
 
-To generate a new library, use:
+We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details.
 
-```sh
-npx nx g @nx/angular:lib mylib
-```
+## 📄 License
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+MIT License - see the [LICENSE](./LICENSE) file for details.
