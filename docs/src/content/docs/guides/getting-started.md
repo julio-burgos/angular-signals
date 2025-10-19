@@ -86,5 +86,4 @@ export class ExampleComponent {
 ## What's Next?
 
 - Check out the [API Reference](/reference/api-reference) for detailed documentation of all utilities
-- Explore the [demo application](https://angular-signals.dev) to see interactive examples
 - Read the [guides](/guides/) for advanced usage patterns

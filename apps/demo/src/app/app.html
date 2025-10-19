@@ -309,6 +309,61 @@
     </div>
   </section>
 
+  <!-- DeepLinkedSignal & Watch -->
+  <section class="demo-section">
+    <h2>🔗 DeepLinkedSignal & Watch</h2>
+    <p class="description">Linked signals with deep equality and multi-signal watching</p>
+
+    <!-- DeepLinkedSignal -->
+    <div class="sub-section">
+      <h3>DeepLinkedSignal</h3>
+      <p class="description">Signals that compute values from other signals with deep equality</p>
+      <div class="controls">
+        <div class="control-group">
+          <span>Count:</span>
+          <input type="number" [value]="count()" (input)="count.set(+$any($event.target).value)" />
+        </div>
+        <div class="control-group">
+          <span>Items (comma-separated):</span>
+          <input type="text" [value]="items().join(',')" (input)="updateItems($any($event.target).value)" />
+        </div>
+      </div>
+      <div class="output">
+        <div class="output-col">
+          <h4>Doubled Count:</h4>
+          <pre>{{ doubledCount() }}</pre>
+        </div>
+        <div class="output-col">
+          <h4>Sum of Items:</h4>
+          <pre>{{ sum() }}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Watch -->
+    <div class="sub-section">
+      <h3>Watch</h3>
+      <p class="description">Watch multiple signals and run effects when any change</p>
+      <div class="controls">
+        <div class="control-group">
+          <span>Value:</span>
+          <input type="number" [value]="watchDemoValue()" (input)="watchDemoValue.set(+$any($event.target).value)" />
+        </div>
+        <div class="control-group">
+          <span>Message:</span>
+          <input type="text" [value]="watchDemoMessage()" (input)="watchDemoMessage.set($any($event.target).value)" />
+        </div>
+      </div>
+      <div class="output">
+        <div class="output-col">
+          <h4>Current Values:</h4>
+          <pre>Value: {{ watchDemoValue() }}, Message: "{{ watchDemoMessage() }}"</pre>
+          <p class="note">Check browser console for watch effect logs</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <footer>
     <p>Angular Signals Library v0.0.2 - All utilities demonstrated above</p>
   </footer>

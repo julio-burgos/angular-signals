@@ -5,12 +5,14 @@ A TypeScript library that extends Angular's signals API with additional utilitie
 ## Features
 
 - **Deep Equality Signals**: Signals that use deep equality comparison instead of reference equality
+- **Linked Signals**: Signals that compute values from other signals with deep equality
 - **Animation Utilities**: Physics-based spring animations and time-based tween animations
 - **State Management**: Counter, toggle, array, and previous value signals
 - **Async Utilities**: Debounce and throttle signals
 - **Timing Utilities**: Interval, timeout, and now signals
 - **Browser APIs**: Media query, event listener, and storage signals
 - **Watch Storage**: Subscribe to specific localStorage/sessionStorage key changes
+- **Watch Utilities**: Effect utilities for watching multiple signals
 
 ## Installation
 
@@ -51,6 +53,43 @@ Creates a computed signal with deep equality checking.
 ```ts
 const user = deepSignal({ name: 'John', age: 30 });
 const displayName = deepComputed(() => `${user().name} (${user().age})`);
+```
+
+#### `deepLinkedSignal<D>(computation: () => D, options?: { equal?: ValueEqualityFn<D>; debugName?: string }): WritableSignal<D>`
+
+Creates a linked signal with deep equality checking.
+
+**Parameters:**
+- `computation: () => D` - The computation function for the linked signal
+- `options?: { equal?: ValueEqualityFn<D>; debugName?: string }` - Optional configuration
+
+**Returns:** `WritableSignal<D>` - A writable signal with deep equality comparison
+
+**Example:**
+```ts
+const count = deepSignal(0);
+const doubled = deepLinkedSignal(() => count() * 2);
+```
+
+#### `deepLinkedSignal<S, D>(options: { source: () => S; computation: (source: S, previous?: { source: S; value: D }) => D; equal?: ValueEqualityFn<D>; debugName?: string }): WritableSignal<D>`
+
+Creates a linked signal with source and computation, using deep equality checking.
+
+**Parameters:**
+- `options.source: () => S` - Source signal function
+- `options.computation: (source: S, previous?: { source: S; value: D }) => D` - Computation function
+- `options.equal?: ValueEqualityFn<D>` - Optional equality function
+- `options.debugName?: string` - Optional debug name
+
+**Returns:** `WritableSignal<D>` - A writable signal with deep equality comparison
+
+**Example:**
+```ts
+const items = deepSignal([1, 2, 3]);
+const sum = deepLinkedSignal({
+  source: () => items(),
+  computation: (source) => source.reduce((a, b) => a + b, 0)
+});
 ```
 
 ### Animation Utilities
@@ -273,25 +312,25 @@ effect(() => {
 });
 ```
 
-## Demo
+## Watch Utilities
 
-Run the demo application to see all utilities in action:
+#### `watch<T>(deps: Signal<any>[], callback: (clean: void) => void, options?: CreateEffectOptions): EffectRef`
 
-```bash
-npm start
+Creates an effect that runs when any of the dependency signals change.
+
+**Parameters:**
+- `deps: Signal<any>[]` - Array of signals to watch
+- `callback: (clean: void) => void` - Function to call when dependencies change
+- `options?: CreateEffectOptions` - Optional effect configuration
+
+**Returns:** `EffectRef` - Effect reference for cleanup
+
+**Example:**
+```ts
+const count = signal(0);
+const name = signal('John');
+
+watch([count, name], () => {
+  console.log('Count or name changed:', count(), name());
+});
 ```
-
-Then open http://localhost:4200 in your browser.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Update documentation
-6. Submit a pull request
-
-## License
-
-MIT

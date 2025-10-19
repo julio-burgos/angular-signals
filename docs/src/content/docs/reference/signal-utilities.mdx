@@ -44,3 +44,80 @@ const displayName = deepComputed(() => `${user().name} (${user().age})`);
 console.log(displayName()); // "John (30)"
 user.set({ name: 'John', age: 30 }); // No update (deep equal)
 ```
+
+## `deepLinkedSignal<D>(computation: () => D, options?: { equal?: ValueEqualityFn<D>; debugName?: string }): WritableSignal<D>`
+
+Creates a linked signal with deep equality checking using lodash's `isEqual` function.
+
+**Parameters:**
+- `computation: () => D` - The computation function for the linked signal
+- `options?: { equal?: ValueEqualityFn<D>; debugName?: string }` - Optional configuration
+
+**Returns:** `WritableSignal<D>` - A writable signal with deep equality comparison
+
+**Example:**
+```ts
+import { deepLinkedSignal, deepSignal } from '@angular-signals/angular-signals';
+
+const count = deepSignal(0);
+const doubled = deepLinkedSignal(() => count() * 2);
+
+console.log(doubled()); // 0
+count.set(5);
+console.log(doubled()); // 10
+```
+
+## `deepLinkedSignal<S, D>(options: { source: () => S; computation: (source: S, previous?: { source: S; value: D }) => D; equal?: ValueEqualityFn<D>; debugName?: string }): WritableSignal<D>`
+
+Creates a linked signal with source and computation, using deep equality checking.
+
+**Parameters:**
+- `options.source: () => S` - Source signal function
+- `options.computation: (source: S, previous?: { source: S; value: D }) => D` - Computation function
+- `options.equal?: ValueEqualityFn<D>` - Optional equality function
+- `options.debugName?: string` - Optional debug name
+
+**Returns:** `WritableSignal<D>` - A writable signal with deep equality comparison
+
+**Example:**
+```ts
+import { deepLinkedSignal, deepSignal } from '@angular-signals/angular-signals';
+
+const items = deepSignal([1, 2, 3]);
+const sum = deepLinkedSignal({
+  source: () => items(),
+  computation: (source) => source.reduce((a, b) => a + b, 0)
+});
+
+console.log(sum()); // 6
+items.set([1, 2, 3, 4]);
+console.log(sum()); // 10
+```
+
+## `watch<T>(deps: Signal<any>[], callback: (clean: void) => void, options?: CreateEffectOptions): EffectRef`
+
+Creates an effect that runs when any of the dependency signals change.
+
+**Parameters:**
+- `deps: Signal<any>[]` - Array of signals to watch
+- `callback: (clean: void) => void` - Function to call when dependencies change
+- `options?: CreateEffectOptions` - Optional effect configuration
+
+**Returns:** `EffectRef` - Effect reference for cleanup
+
+**Example:**
+```ts
+import { watch, signal } from '@angular-signals/angular-signals';
+
+const count = signal(0);
+const name = signal('John');
+
+const effectRef = watch([count, name], () => {
+  console.log('Count or name changed:', count(), name());
+});
+
+// Cleanup when needed
+effectRef.destroy();
+```
+
+This utility is useful when you need to watch multiple signals and perform side effects, similar to React's `useEffect` with multiple dependencies.

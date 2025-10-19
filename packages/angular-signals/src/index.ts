@@ -5,6 +5,7 @@
 // Signal utilities
 export * from './lib/signal/signal';
 export * from './lib/computed/computed';
+export * from './lib/linkedsignal/linkedsignal';
 
 // Animation utilities
 export * from './lib/animation/spring';
@@ -29,3 +30,6 @@ export * from './lib/timing/now';
 export * from './lib/browser/media-query';
 export * from './lib/browser/event-listener';
 export * from './lib/browser/storage';
+
+// Watch utilities
+export * from './lib/watch/watch';

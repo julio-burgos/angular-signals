@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {
   deepSignal,
   deepComputed,
+  deepLinkedSignal,
   spring,
   tween,
   usePrevious,
@@ -18,7 +19,8 @@ import {
   useEventListener,
   useLocalStorage,
   useSessionStorage,
-  watchLocalStorageKey
+  watchLocalStorageKey,
+  watch
 } from '@angular-signals/angular-signals'
 
 @Component({
@@ -45,6 +47,15 @@ export class App {
       displayName: `${profile.name} (${profile.age})`,
       location: `${profile.address.city}, ${profile.address.country}`,
     };
+  });
+
+  // DeepLinkedSignal Demo
+  count = signal(0);
+  doubledCount = deepLinkedSignal(() => this.count() * 2);
+  items = signal([1, 2, 3]);
+  sum = deepLinkedSignal({
+    source: () => this.items(),
+    computation: (source) => source.reduce((a, b) => a + b, 0)
   });
 
   // Spring Animation Demo
@@ -109,6 +120,10 @@ export class App {
   // watchLocalStorageKey
   watchedLocalStorage = watchLocalStorageKey('watched-key');
 
+  // Watch Demo
+  watchDemoValue = signal(0);
+  watchDemoMessage = signal('Initial message');
+
   constructor() {
     // Setup event listener for window resize
     useEventListener(window, 'scroll', () => {
@@ -121,6 +136,11 @@ export class App {
       if (search) {
         console.log('Debounced search:', search);
       }
+    });
+
+    // Watch demo - logs when either signal changes
+    watch([this.watchDemoValue, this.watchDemoMessage], () => {
+      console.log('Watch triggered:', this.watchDemoValue(), this.watchDemoMessage());
     });
   }
 
@@ -147,6 +167,11 @@ export class App {
         city,
       },
     }));
+  }
+
+  updateItems(itemsString: string) {
+    const items = itemsString.split(',').map(item => parseInt(item.trim(), 10)).filter(item => !isNaN(item));
+    this.items.set(items);
   }
 
   // Spring animation methods
