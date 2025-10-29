@@ -4,6 +4,7 @@ import {
   deepSignal,
   deepComputed,
   deepLinkedSignal,
+  reactive,
   spring,
   tween,
   usePrevious,
@@ -20,8 +21,8 @@ import {
   useLocalStorage,
   useSessionStorage,
   watchLocalStorageKey,
-  watch
-} from '@angular-signals/angular-signals'
+  watch,
+} from '@angular-signals/angular-signals';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +31,14 @@ import {
   styleUrl: './app.css',
 })
 export class App {
+  // Reactive Demo
+  userReactive = reactive({
+    name: 'John Doe',
+    age: 30,
+    email: 'john@example.com',
+    isActive: true,
+  });
+
   // DeepSignal Demo
   userProfile = deepSignal({
     name: 'John Doe',
@@ -55,7 +64,7 @@ export class App {
   items = signal([1, 2, 3]);
   sum = deepLinkedSignal({
     source: () => this.items(),
-    computation: (source) => source.reduce((a, b) => a + b, 0)
+    computation: (source) => source.reduce((a, b) => a + b, 0),
   });
 
   // Spring Animation Demo
@@ -140,7 +149,11 @@ export class App {
 
     // Watch demo - logs when either signal changes
     watch([this.watchDemoValue, this.watchDemoMessage], () => {
-      console.log('Watch triggered:', this.watchDemoValue(), this.watchDemoMessage());
+      console.log(
+        'Watch triggered:',
+        this.watchDemoValue(),
+        this.watchDemoMessage()
+      );
     });
   }
 
@@ -153,24 +166,35 @@ export class App {
   }
 
   updateAge(age: number) {
-    this.userProfile.update((profile: typeof this.userProfile extends { (): infer T } ? T : never) => ({
-      ...profile,
-      age,
-    }));
+    this.userProfile.update(
+      (
+        profile: typeof this.userProfile extends { (): infer T } ? T : never
+      ) => ({
+        ...profile,
+        age,
+      })
+    );
   }
 
   updateCity(city: string) {
-    this.userProfile.update((profile: typeof this.userProfile extends { (): infer T } ? T : never) => ({
-      ...profile,
-      address: {
-        ...profile.address,
-        city,
-      },
-    }));
+    this.userProfile.update(
+      (
+        profile: typeof this.userProfile extends { (): infer T } ? T : never
+      ) => ({
+        ...profile,
+        address: {
+          ...profile.address,
+          city,
+        },
+      })
+    );
   }
 
   updateItems(itemsString: string) {
-    const items = itemsString.split(',').map(item => parseInt(item.trim(), 10)).filter(item => !isNaN(item));
+    const items = itemsString
+      .split(',')
+      .map((item) => parseInt(item.trim(), 10))
+      .filter((item) => !isNaN(item));
     this.items.set(items);
   }
 
@@ -186,6 +210,31 @@ export class App {
   resetSpring() {
     this.springDemo.target.set(0);
     this.springPosition.target.set([0, 0]);
+  }
+
+  // Reactive methods
+  updateReactiveName(name: string) {
+    this.userReactive.name.set(name);
+  }
+
+  updateReactiveAge(age: number) {
+    this.userReactive.age.set(age);
+  }
+
+  updateReactiveEmail(email: string) {
+    this.userReactive.email.set(email);
+  }
+
+  toggleReactiveStatus() {
+    this.userReactive.isActive.update((status) => !status);
+  }
+
+  updateReactiveMultiple(name: string, email: string) {
+    this.userReactive.update({ name, email });
+  }
+
+  resetReactiveUser() {
+    this.userReactive.reset();
   }
 
   // Tween animation methods
@@ -209,7 +258,7 @@ export class App {
 
   // State Management Methods
   incrementCounterForPrevious() {
-    this.counterForPrevious.update(v => v + 1);
+    this.counterForPrevious.update((v) => v + 1);
   }
 
   // Array methods

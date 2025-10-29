@@ -7,19 +7,33 @@
   <!-- Deep Signal & Computed -->
   <section class="demo-section">
     <h2>🔵 DeepSignal & DeepComputed</h2>
-    <p class="description">Signals with deep equality checking for nested objects</p>
+    <p class="description">
+      Signals with deep equality checking for nested objects
+    </p>
     <div class="controls">
       <div class="control-group">
         <span>Name:</span>
-        <input type="text" [value]="userProfile().name" (input)="updateName($any($event.target).value)" />
+        <input
+          type="text"
+          [value]="userProfile().name"
+          (input)="updateName($any($event.target).value)"
+        />
       </div>
       <div class="control-group">
         <span>Age:</span>
-        <input type="number" [value]="userProfile().age" (input)="updateAge(+$any($event.target).value)" />
+        <input
+          type="number"
+          [value]="userProfile().age"
+          (input)="updateAge(+$any($event.target).value)"
+        />
       </div>
       <div class="control-group">
         <span>City:</span>
-        <input type="text" [value]="userProfile().address.city" (input)="updateCity($any($event.target).value)" />
+        <input
+          type="text"
+          [value]="userProfile().address.city"
+          (input)="updateCity($any($event.target).value)"
+        />
       </div>
     </div>
     <div class="output">
@@ -30,6 +44,62 @@
       <div class="output-col">
         <h4>Computed Summary:</h4>
         <pre>{{ userSummary() | json }}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reactive Demo -->
+  <section class="demo-section">
+    <h2>⚡ Reactive Objects</h2>
+    <p class="description">
+      Convert plain objects into fine-grained reactive signals
+    </p>
+    <div class="controls">
+      <div class="control-group">
+        <span>Name:</span>
+        <input
+          type="text"
+          [value]="userReactive.name()"
+          (input)="updateReactiveName($any($event.target).value)"
+        />
+      </div>
+      <div class="control-group">
+        <span>Age:</span>
+        <input
+          type="number"
+          [value]="userReactive.age()"
+          (input)="updateReactiveAge(+$any($event.target).value)"
+        />
+      </div>
+      <div class="control-group">
+        <span>Email:</span>
+        <input
+          type="text"
+          [value]="userReactive.email()"
+          (input)="updateReactiveEmail($any($event.target).value)"
+        />
+      </div>
+    </div>
+    <div class="button-group">
+      <button (click)="toggleReactiveStatus()">Toggle Active Status</button>
+      <button (click)="updateReactiveMultiple('Jane Doe', 'jane@example.com')">
+        Update Name & Email
+      </button>
+      <button (click)="resetReactiveUser()">Reset</button>
+    </div>
+    <div class="output">
+      <div class="output-col">
+        <h4>Individual Signals:</h4>
+        <pre>
+Name: {{ userReactive.name() }}
+Age: {{ userReactive.age() }}
+Email: {{ userReactive.email() }}
+Active: {{ userReactive.isActive() }}</pre
+        >
+      </div>
+      <div class="output-col">
+        <h4>Complete State:</h4>
+        <pre>{{ userReactive.state() | json }}</pre>
       </div>
     </div>
   </section>
@@ -62,7 +132,12 @@
         <button (click)="toggleDemo.setFalse()">Set False</button>
       </div>
       <div class="value-display">
-        <span>State: <strong [class.active]="toggleDemo.value()">{{ toggleDemo.value() ? 'ON' : 'OFF' }}</strong></span>
+        <span
+          >State:
+          <strong [class.active]="toggleDemo.value()"
+            >{{ toggleDemo.value() ? 'ON' : 'OFF' }}</strong
+          ></span
+        >
       </div>
     </div>
 
@@ -81,7 +156,10 @@
         <span>Count: <strong>{{ counterDemo.count() }}</strong></span>
       </div>
       <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="counterDemo.count() * 10"></div>
+        <div
+          class="progress-fill"
+          [style.width.%]="counterDemo.count() * 10"
+        ></div>
       </div>
     </div>
 
@@ -96,7 +174,8 @@
             placeholder="Add new item..."
             [value]="newItem()"
             (input)="newItem.set($any($event.target).value)"
-            (keyup.enter)="addItem()" />
+            (keyup.enter)="addItem()"
+          />
           <button (click)="addItem()">Add</button>
         </div>
       </div>
@@ -106,7 +185,10 @@
         <button (click)="clearArray()">Clear All</button>
       </div>
       <div class="array-display">
-        <div class="array-item" *ngFor="let item of arrayDemo.items(); let i = index">
+        <div
+          class="array-item"
+          *ngFor="let item of arrayDemo.items(); let i = index"
+        >
           <span>{{ i + 1 }}. {{ item }}</span>
           <button (click)="arrayDemo.remove(i)">×</button>
         </div>
@@ -132,12 +214,18 @@
             type="text"
             placeholder="Type something..."
             [value]="searchInput()"
-            (input)="searchInput.set($any($event.target).value)" />
+            (input)="searchInput.set($any($event.target).value)"
+          />
         </div>
       </div>
       <div class="value-display">
-        <span>Immediate: <strong>{{ searchInput() || '(empty)' }}</strong></span>
-        <span>Debounced: <strong>{{ debouncedSearch() || '(empty)' }}</strong></span>
+        <span
+          >Immediate: <strong>{{ searchInput() || '(empty)' }}</strong></span
+        >
+        <span
+          >Debounced:
+          <strong>{{ debouncedSearch() || '(empty)' }}</strong></span
+        >
       </div>
     </div>
 
@@ -164,13 +252,28 @@
       <h3>useInterval</h3>
       <p class="description">Interval timer with pause/resume</p>
       <div class="button-group">
-        <button (click)="intervalDemo.pause()" [disabled]="!intervalDemo.isActive()">Pause</button>
-        <button (click)="intervalDemo.resume()" [disabled]="intervalDemo.isActive()">Resume</button>
+        <button
+          (click)="intervalDemo.pause()"
+          [disabled]="!intervalDemo.isActive()"
+        >
+          Pause
+        </button>
+        <button
+          (click)="intervalDemo.resume()"
+          [disabled]="intervalDemo.isActive()"
+        >
+          Resume
+        </button>
         <button (click)="intervalDemo.reset()">Reset</button>
       </div>
       <div class="value-display">
         <span>Ticks: <strong>{{ intervalDemo.count() }}</strong></span>
-        <span>Status: <strong>{{ intervalDemo.isActive() ? 'Running' : 'Paused' }}</strong></span>
+        <span
+          >Status:
+          <strong
+            >{{ intervalDemo.isActive() ? 'Running' : 'Paused' }}</strong
+          ></span
+        >
       </div>
     </div>
 
@@ -207,8 +310,14 @@
       <h3>useMediaQuery</h3>
       <p class="description">Reactive media query matching</p>
       <div class="value-display">
-        <span>Mobile (≤768px): <strong [class.active]="isMobile()">{{ isMobile() }}</strong></span>
-        <span>Desktop (≥1024px): <strong [class.active]="isDesktop()">{{ isDesktop() }}</strong></span>
+        <span
+          >Mobile (≤768px):
+          <strong [class.active]="isMobile()">{{ isMobile() }}</strong></span
+        >
+        <span
+          >Desktop (≥1024px):
+          <strong [class.active]="isDesktop()">{{ isDesktop() }}</strong></span
+        >
       </div>
       <p class="hint">Resize your browser window to see changes</p>
     </div>
@@ -223,34 +332,47 @@
           <input
             type="text"
             [value]="localStorageDemo.value()"
-            (input)="updateLocalStorage($any($event.target).value)" />
+            (input)="updateLocalStorage($any($event.target).value)"
+          />
           <button (click)="localStorageDemo.remove()">Clear</button>
         </div>
         <div class="control-group">
           <span>SessionStorage Counter:</span>
-          <button (click)="incrementSessionStorage()">Increment ({{ sessionStorageDemo.value() }})</button>
+          <button (click)="incrementSessionStorage()">
+            Increment ({{ sessionStorageDemo.value() }})
+          </button>
           <button (click)="sessionStorageDemo.remove()">Clear</button>
         </div>
       </div>
-      <p class="hint">Values persist across page reloads (localStorage) or session (sessionStorage)</p>
+      <p class="hint">
+        Values persist across page reloads (localStorage) or session
+        (sessionStorage)
+      </p>
     </div>
 
     <!-- Watch Storage -->
     <div class="sub-section">
       <h3>watchLocalStorageKey</h3>
-      <p class="description">Watch specific localStorage keys for changes from other tabs/windows</p>
+      <p class="description">
+        Watch specific localStorage keys for changes from other tabs/windows
+      </p>
       <div class="controls">
         <div class="control-group">
           <span>Watched LocalStorage:</span>
           <input
             type="text"
             placeholder="Update to see changes"
-            (input)="updateWatchedLocalStorage($any($event.target).value)" />
-          <span class="value-display">Value: {{ watchedLocalStorage() || 'undefined' }}</span>
+            (input)="updateWatchedLocalStorage($any($event.target).value)"
+          />
+          <span class="value-display"
+            >Value: {{ watchedLocalStorage() || 'undefined' }}</span
+          >
           <button (click)="clearWatchedLocalStorage()">Clear</button>
         </div>
       </div>
-      <p class="hint">Open this page in another tab and modify values to see real-time updates</p>
+      <p class="hint">
+        Open this page in another tab and modify values to see real-time updates
+      </p>
     </div>
   </section>
 
@@ -270,15 +392,25 @@
       </div>
       <div class="value-display">
         <span>Target: <strong>{{ springDemo.target() }}</strong></span>
-        <span>Current: <strong>{{ springDemo.current() | number:'1.2-2' }}</strong></span>
+        <span
+          >Current:
+          <strong>{{ springDemo.current() | number:'1.2-2' }}</strong></span
+        >
       </div>
       <div class="progress-bar">
-        <div class="progress-fill spring" [style.width.%]="springDemo.current() / 2"></div>
+        <div
+          class="progress-fill spring"
+          [style.width.%]="springDemo.current() / 2"
+        ></div>
       </div>
-      <div class="canvas" (click)="animateSpringPosition($event.offsetX - 25, $event.offsetY - 25)">
-        <div class="ball spring-ball"
-             [style.transform]="'translate(' + springPosition.current()[0] + 'px, ' + springPosition.current()[1] + 'px)'">
-        </div>
+      <div
+        class="canvas"
+        (click)="animateSpringPosition($event.offsetX - 25, $event.offsetY - 25)"
+      >
+        <div
+          class="ball spring-ball"
+          [style.transform]="'translate(' + springPosition.current()[0] + 'px, ' + springPosition.current()[1] + 'px)'"
+        ></div>
         <p class="hint">Click anywhere to animate the ball</p>
       </div>
     </div>
@@ -295,15 +427,25 @@
       </div>
       <div class="value-display">
         <span>Target: <strong>{{ tweenDemo.target() }}</strong></span>
-        <span>Current: <strong>{{ tweenDemo.current() | number:'1.2-2' }}</strong></span>
+        <span
+          >Current:
+          <strong>{{ tweenDemo.current() | number:'1.2-2' }}</strong></span
+        >
       </div>
       <div class="progress-bar">
-        <div class="progress-fill tween" [style.width.%]="tweenDemo.current() / 2"></div>
+        <div
+          class="progress-fill tween"
+          [style.width.%]="tweenDemo.current() / 2"
+        ></div>
       </div>
-      <div class="canvas" (click)="animateTweenPosition($event.offsetX - 25, $event.offsetY - 25)">
-        <div class="ball tween-ball"
-             [style.transform]="'translate(' + tweenPosition.current()[0] + 'px, ' + tweenPosition.current()[1] + 'px)'">
-        </div>
+      <div
+        class="canvas"
+        (click)="animateTweenPosition($event.offsetX - 25, $event.offsetY - 25)"
+      >
+        <div
+          class="ball tween-ball"
+          [style.transform]="'translate(' + tweenPosition.current()[0] + 'px, ' + tweenPosition.current()[1] + 'px)'"
+        ></div>
         <p class="hint">Click anywhere to animate the ball with easing</p>
       </div>
     </div>
@@ -312,20 +454,32 @@
   <!-- DeepLinkedSignal & Watch -->
   <section class="demo-section">
     <h2>🔗 DeepLinkedSignal & Watch</h2>
-    <p class="description">Linked signals with deep equality and multi-signal watching</p>
+    <p class="description">
+      Linked signals with deep equality and multi-signal watching
+    </p>
 
     <!-- DeepLinkedSignal -->
     <div class="sub-section">
       <h3>DeepLinkedSignal</h3>
-      <p class="description">Signals that compute values from other signals with deep equality</p>
+      <p class="description">
+        Signals that compute values from other signals with deep equality
+      </p>
       <div class="controls">
         <div class="control-group">
           <span>Count:</span>
-          <input type="number" [value]="count()" (input)="count.set(+$any($event.target).value)" />
+          <input
+            type="number"
+            [value]="count()"
+            (input)="count.set(+$any($event.target).value)"
+          />
         </div>
         <div class="control-group">
           <span>Items (comma-separated):</span>
-          <input type="text" [value]="items().join(',')" (input)="updateItems($any($event.target).value)" />
+          <input
+            type="text"
+            [value]="items().join(',')"
+            (input)="updateItems($any($event.target).value)"
+          />
         </div>
       </div>
       <div class="output">
@@ -343,21 +497,33 @@
     <!-- Watch -->
     <div class="sub-section">
       <h3>Watch</h3>
-      <p class="description">Watch multiple signals and run effects when any change</p>
+      <p class="description">
+        Watch multiple signals and run effects when any change
+      </p>
       <div class="controls">
         <div class="control-group">
           <span>Value:</span>
-          <input type="number" [value]="watchDemoValue()" (input)="watchDemoValue.set(+$any($event.target).value)" />
+          <input
+            type="number"
+            [value]="watchDemoValue()"
+            (input)="watchDemoValue.set(+$any($event.target).value)"
+          />
         </div>
         <div class="control-group">
           <span>Message:</span>
-          <input type="text" [value]="watchDemoMessage()" (input)="watchDemoMessage.set($any($event.target).value)" />
+          <input
+            type="text"
+            [value]="watchDemoMessage()"
+            (input)="watchDemoMessage.set($any($event.target).value)"
+          />
         </div>
       </div>
       <div class="output">
         <div class="output-col">
           <h4>Current Values:</h4>
-          <pre>Value: {{ watchDemoValue() }}, Message: "{{ watchDemoMessage() }}"</pre>
+          <pre>
+Value: {{ watchDemoValue() }}, Message: "{{ watchDemoMessage() }}"</pre
+          >
           <p class="note">Check browser console for watch effect logs</p>
         </div>
       </div>

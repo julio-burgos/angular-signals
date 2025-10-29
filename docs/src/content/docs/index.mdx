@@ -1,15 +1,77 @@
 ---
 title: Angular Signals
-description: Get started with angular-signals
+description: A TypeScript library that extends Angular's signals API with additional utilities for reactive programming
 tableOfContents: false
 hero:
-  tagline: Congrats on setting up a new Starlight project!
+  tagline: Extend Angular's signals with powerful utilities for reactive programming
   image:
     file: ../../assets/houston.webp
   actions:
     - text: Getting started
       link: /guides/getting-started
       icon: right-arrow
+    - text: API Reference
+      link: /reference/signal-utilities
+      icon: open-book
+      variant: minimal
 
 ---
+
+## Features
+
+Angular Signals provides a comprehensive set of utilities to enhance your reactive programming experience:
+
+### 🔵 Signal Utilities
+- **Deep Equality Signals** - Signals with deep equality comparison for nested objects
+- **Reactive Objects** - Convert plain objects into fine-grained reactive signals
+- **Linked Signals** - Compute values from other signals with deep equality
+- **Watch Utilities** - Effect utilities for watching multiple signals
+
+### ⚡ Animation Utilities
+- **Spring Animations** - Physics-based animations with stiffness and damping
+- **Tween Animations** - Time-based animations with easing curves
+
+### 📊 State Management
+- **Counter** - Counter with bounds and operations
+- **Toggle** - Boolean toggle with convenience methods
+- **Array** - Array manipulation with immutable operations
+- **Previous** - Track previous signal values
+
+### ⏱️ Timing Utilities
+- **Interval** - Interval timer with pause/resume
+- **Timeout** - Timeout with cleanup
+- **Now** - Current time signal
+
+### 🌐 Browser APIs
+- **Media Query** - Reactive media query matching
+- **Event Listener** - Reactive event handling
+- **Storage** - localStorage and sessionStorage signals
+- **Storage Watchers** - Watch storage changes across tabs
+
+### 🔄 Async Utilities
+- **Debounce** - Debounce signal updates
+- **Throttle** - Throttle signal updates
+
+## Quick Start
+
+```typescript
+import { reactive, deepSignal, spring } from '@angular-signals/angular-signals';
+
+// Reactive object with fine-grained signals
+const user = reactive({
+  name: 'John',
+  age: 30,
+  email: 'john@example.com'
+});
+
+user.name.set('Jane'); // Only name signal updates
+user.age.update(age => age + 1); // Only age signal updates
+
+// Deep equality signal
+const profile = deepSignal({ name: 'John', settings: { theme: 'dark' } });
+
+// Spring animation
+const position = spring(0, { stiffness: 0.15, damping: 0.8 });
+position.target.set(100); // Animate to 100
+```
 

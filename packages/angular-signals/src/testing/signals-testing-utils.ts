@@ -1,12 +1,23 @@
-import { computed, CreateComputedOptions, CreateEffectOptions, effect, EffectCleanupFn, EffectRef, Signal } from "@angular/core";
-
+import {
+  computed,
+  CreateComputedOptions,
+  CreateEffectOptions,
+  effect,
+  EffectCleanupFn,
+  EffectRef,
+  Signal,
+} from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 export type ComputedSpy<T> = Signal<T> & {
   /** The number of times the computation function has been executed. */
   timesUpdated: number;
 };
 
 /** Creates a computed signal that monitors the number of times it is updated. */
-export function computedSpy<T>(computation: () => T, options?: CreateComputedOptions<T>): ComputedSpy<T> {
+export function computedSpy<T>(
+  computation: () => T,
+  options?: CreateComputedOptions<T>
+): ComputedSpy<T> {
   const output = computed(() => {
     output.timesUpdated++;
     return computation();
@@ -31,4 +42,12 @@ export function effectSpy(
   }, options) as EffectSpy;
   output.timesUpdated = 0;
   return output;
+}
+
+export function act<T>(fn: () => T): T {
+  try {
+    return fn();
+  } finally {
+    TestBed.tick();
+  }
 }

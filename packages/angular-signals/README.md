@@ -5,6 +5,7 @@ A TypeScript library that extends Angular's signals API with additional utilitie
 ## Features
 
 - **Deep Equality Signals**: Signals that use deep equality comparison instead of reference equality
+- **Reactive Objects**: Convert plain objects into fine-grained reactive signals for each property
 - **Linked Signals**: Signals that compute values from other signals with deep equality
 - **Animation Utilities**: Physics-based spring animations and time-based tween animations
 - **State Management**: Counter, toggle, array, and previous value signals
@@ -90,6 +91,58 @@ const sum = deepLinkedSignal({
   source: () => items(),
   computation: (source) => source.reduce((a, b) => a + b, 0)
 });
+```
+
+#### `reactive<T extends Record<string, unknown>>(initialValue: T): ReactiveObject<T>`
+
+Creates a reactive object where each property becomes an individual signal, providing fine-grained reactivity.
+
+**Parameters:**
+- `initialValue: T` - The initial object to make reactive
+
+**Returns:** `ReactiveObject<T>` - A reactive object with signal properties and utility methods
+
+**Type Definition:**
+```ts
+type ReactiveObject<T extends Record<string, unknown>> = {
+  [K in keyof T]: WritableSignal<T[K]>;
+} & {
+  readonly state: Signal<T>;
+  readonly update: (partial: Partial<T>) => void;
+  readonly reset: () => void;
+};
+```
+
+**Example:**
+```ts
+interface User {
+  name: string;
+  age: number;
+  email: string;
+}
+
+const user = reactive<User>({
+  name: 'John',
+  age: 30,
+  email: 'john@example.com'
+});
+
+// Access individual signals
+console.log(user.name()); // 'John'
+console.log(user.age()); // 30
+
+// Update individual properties
+user.name.set('Jane');
+user.age.update(age => age + 1);
+
+// Get the complete state
+console.log(user.state()); // { name: 'Jane', age: 31, email: 'john@example.com' }
+
+// Update multiple properties
+user.update({ name: 'Bob', email: 'bob@example.com' });
+
+// Reset to initial values
+user.reset();
 ```
 
 ### Animation Utilities

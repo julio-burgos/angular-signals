@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Signal Utilities:**
+  - `reactive` - Convert plain objects into fine-grained reactive signals for each property
+
 ### Changed
 - **Browser Storage:** `useSessionStorage` and `watchSessionStorageKey` no longer synchronize across browser tabs since sessionStorage is unique to each tab/window
 

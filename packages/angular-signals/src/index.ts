@@ -4,6 +4,7 @@
 
 // Signal utilities
 export * from './lib/signal/signal';
+export * from './lib/signal/reactive';
 export * from './lib/computed/computed';
 export * from './lib/linkedsignal/linkedsignal';
 

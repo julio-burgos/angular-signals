@@ -7,6 +7,7 @@ A TypeScript library that extends Angular's signals API with additional utilitie
 ## ✨ Features
 
 - **Deep Equality Signals** - Signals that use deep equality comparison instead of reference equality
+- **Reactive Objects** - Convert plain objects into fine-grained reactive signals for each property
 - **Animation Utilities** - Physics-based spring animations and time-based tween animations with easing
 - **State Management** - Counter, toggle, array, and previous value signals
 - **Async Utilities** - Debounce and throttle signals
@@ -22,10 +23,15 @@ npm install @angular-signals/angular-signals
 ## 📖 Quick Start
 
 ```typescript
-import { deepSignal, spring, useCounter } from '@angular-signals/angular-signals';
+import { deepSignal, reactive, spring, useCounter } from '@angular-signals/angular-signals';
 
 // Deep equality signal
 const user = deepSignal({ name: 'John', age: 30 });
+
+// Reactive object with fine-grained signals
+const state = reactive({ count: 0, name: 'John' });
+state.count.set(5); // Only count signal updates
+state.name.set('Jane'); // Only name signal updates
 
 // Spring animation
 const position = spring(0, { stiffness: 0.15, damping: 0.8 });
