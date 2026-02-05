@@ -86,26 +86,11 @@ export function tween<T extends number | number[]>(
   const current = signal<T>(initialValue);
 
   let startValue: T = initialValue;
-  let delayStartTime: number | null = null;
   let animationStartTime: number | null = null;
   let animationFrameId: number | null = null;
   let timeoutId: number | null = null;
 
   const animate = (time: number) => {
-    // Handle delay
-    if (delay > 0 && delayStartTime === null) {
-      delayStartTime = time;
-    }
-
-    if (delay > 0 && delayStartTime !== null) {
-      const delayElapsed = time - delayStartTime;
-      if (delayElapsed < delay) {
-        animationFrameId = requestAnimationFrame(animate);
-        return;
-      }
-    }
-
-    // Start animation after delay
     if (animationStartTime === null) {
       animationStartTime = time;
     }
@@ -136,7 +121,6 @@ export function tween<T extends number | number[]>(
     } else {
       current.set(targetValue);
       animationFrameId = null;
-      delayStartTime = null;
       animationStartTime = null;
     }
   };
@@ -156,7 +140,6 @@ export function tween<T extends number | number[]>(
     }
 
     startValue = current() as T;
-    delayStartTime = null;
     animationStartTime = null;
 
     if (delay > 0) {
@@ -175,4 +158,3 @@ export function tween<T extends number | number[]>(
     target,
   };
 }
-

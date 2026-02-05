@@ -197,6 +197,65 @@ Active: {{ userReactive.isActive() }}</pre
         </div>
       </div>
     </div>
+
+    <!-- useStateHistory -->
+    <div class="sub-section">
+      <h3>useStateHistory</h3>
+      <p class="description">
+        Track state changes and navigate history with undo/redo
+      </p>
+      <div class="controls">
+        <div class="control-group">
+          <span>Value:</span>
+          <input
+            type="number"
+            [value]="historyValue()"
+            (input)="historyValue.set(+$any($event.target).value)"
+          />
+        </div>
+      </div>
+      <div class="button-group">
+        <button (click)="historyValue.set(historyValue() - 1)">-1</button>
+        <button (click)="historyValue.set(historyValue() + 1)">+1</button>
+        <button
+          (click)="stateHistoryDemo.undo()"
+          [disabled]="!stateHistoryDemo.canUndo()"
+        >
+          Undo
+        </button>
+        <button
+          (click)="stateHistoryDemo.redo()"
+          [disabled]="!stateHistoryDemo.canRedo()"
+        >
+          Redo
+        </button>
+        <button (click)="stateHistoryDemo.clear()">Clear</button>
+      </div>
+      <div class="value-display">
+        <span>Current: <strong>{{ historyValue() }}</strong></span>
+        <span>Index: <strong>{{ stateHistoryDemo.index() }}</strong></span>
+        <span>Entries: <strong>{{ stateHistoryDemo.log().length }}</strong></span>
+      </div>
+      <div class="output">
+        <div class="output-col">
+          <h4>History Log:</h4>
+          <div class="array-display">
+            <div
+              class="array-item"
+              *ngFor="let entry of stateHistoryDemo.log(); let i = index"
+            >
+              <span>
+                {{ i }}.
+                <strong [class.active]="i === stateHistoryDemo.index()">{{
+                  entry.snapshot
+                }}</strong>
+                <span class="hint">({{ entry.timestamp | date:'mediumTime' }})</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- Async Utilities -->

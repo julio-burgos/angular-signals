@@ -10,6 +10,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Signal Utilities:**
   - `reactive` - Convert plain objects into fine-grained reactive signals for each property
+- Added: useStateHistory - Track signal changes with a timestamped history log and undo/redo controls
+- Added: useDocumentVisible - Signal for Page Visibility API
+- Added: useIdle - Idle detection with activity events and timeout
+- Added: onClickOutside - Outside-click detection with cleanup
+- Added: usePressedKeys - Track currently pressed keyboard keys
+- Added: useGeolocation - Geolocation watcher signals with start/stop
+- Added: useIsMounted - Signal that flips false on destroy
+- Added: useActiveElement - Track `document.activeElement` reactively
+- Added: useElementRect - Reactive bounding client rect tracking
+- Added: useElementSize - Reactive element width/height tracking
+- Added: useFocusWithin - Track focus-within for an element
+- Added: useInViewport - IntersectionObserver-based viewport detection
+- Added: useResizeObserver - ResizeObserver helper with cleanup
+- Added: useMutationObserver - MutationObserver helper with cleanup
+- Added: useIntersectionObserver - IntersectionObserver helper with cleanup
+- Added: useAnimationFrames - requestAnimationFrame loop with timing signals
+- Added: extract - Resolve direct values or getters/signals
+- Added: boolAttr - Parse boolean-attribute-like values
 
 ### Changed
 - **Browser Storage:** `useSessionStorage` and `watchSessionStorageKey` no longer synchronize across browser tabs since sessionStorage is unique to each tab/window

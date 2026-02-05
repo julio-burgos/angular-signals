@@ -8,12 +8,14 @@ A TypeScript library that extends Angular's signals API with additional utilitie
 - **Reactive Objects**: Convert plain objects into fine-grained reactive signals for each property
 - **Linked Signals**: Signals that compute values from other signals with deep equality
 - **Animation Utilities**: Physics-based spring animations and time-based tween animations
-- **State Management**: Counter, toggle, array, and previous value signals
+- **State Management**: Counter, toggle, array, previous value, and state history utilities
 - **Async Utilities**: Debounce and throttle signals
 - **Timing Utilities**: Interval, timeout, and now signals
 - **Browser APIs**: Media query, event listener, and storage signals
 - **Watch Storage**: Subscribe to specific localStorage/sessionStorage key changes
 - **Watch Utilities**: Effect utilities for watching multiple signals
+- **Element Utilities**: Element size/rect, focus-within, viewport detection, and observer helpers
+- **Utility Helpers**: `extract` and `boolAttr`
 
 ## Installation
 
@@ -178,6 +180,24 @@ const tween = tween(0, { duration: 1000, easing: 'easeOut' });
 tween.target.set(100); // Animate to 100 over 1 second
 ```
 
+#### `useAnimationFrames(options?: AnimationFramesOptions): AnimationFramesReturn`
+
+Runs a `requestAnimationFrame` loop and exposes timing signals.
+
+**Parameters:**
+- `options?: AnimationFramesOptions` - Optional configuration:
+  - `immediate?: boolean` - Start immediately (default: true)
+  - `fpsLimit?: number | null | (() => number | null)` - Optional FPS limit
+
+**Returns:** `AnimationFramesReturn` - `{ running, time, delta, frame, start, stop }`
+
+**Example:**
+```ts
+const frames = useAnimationFrames({ fpsLimit: 30 });
+console.log(frames.frame()); // frame count
+frames.stop();
+```
+
 ### State Management
 
 #### `useCounter(initialValue?: number): CounterReturn`
@@ -215,6 +235,118 @@ Returns the previous value of a signal.
 - `signal: Signal<T>` - Signal to track
 
 **Returns:** `Signal<T | undefined>` - Signal containing the previous value
+
+#### `useStateHistory<T>(state: WritableSignal<T>, options?: StateHistoryOptions<T>): StateHistoryReturn<T>`
+
+Tracks a writable signal's value changes over time and provides undo/redo functionality.
+
+**Parameters:**
+- `state: WritableSignal<T>` - The writable signal to track
+- `options?: StateHistoryOptions<T>` - Optional configuration:
+  - `maxSize?: number` - Maximum number of snapshots to keep (default: Infinity)
+  - `clone?: (value: T) => T` - Clone snapshots before storing (default: identity)
+  - `timestamp?: () => number` - Timestamp provider (default: Date.now)
+
+**Returns:** `StateHistoryReturn<T>` - Object with history log signals and controls:
+- `log: Signal<readonly { snapshot: T; timestamp: number }[]>` - History log (includes current snapshot)
+- `index: Signal<number>` - Current snapshot index
+- `canUndo: Signal<boolean>` - Whether undo is possible
+- `canRedo: Signal<boolean>` - Whether redo is possible
+- `undo(): void` - Restore previous snapshot
+- `redo(): void` - Restore next snapshot
+- `clear(): void` - Clear history (keeps current snapshot)
+
+**Example:**
+```ts
+import { signal } from '@angular/core';
+import { useStateHistory } from '@angular-signals/angular-signals';
+
+const count = signal(0);
+const history = useStateHistory(count, { maxSize: 10 });
+
+count.set(1);
+count.set(2);
+
+history.undo(); // count -> 1
+history.redo(); // count -> 2
+```
+
+### Browser APIs
+
+#### `useDocumentVisible(options?: DocumentVisibleOptions): Signal<boolean>`
+
+Tracks whether the current document is visible.
+
+**Example:**
+```ts
+const isVisible = useDocumentVisible();
+```
+
+#### `useIdle(options?: IdleOptions): IdleReturn`
+
+Tracks whether the user is idle based on activity events.
+
+**Returns:** `{ idle, lastActive, reset, stop }`
+
+#### `onClickOutside(target, handler, options?): ClickOutsideReturn`
+
+Calls a handler when an event occurs outside the target element.
+
+#### `usePressedKeys(options?: PressedKeysOptions): PressedKeysReturn`
+
+Tracks currently pressed keys.
+
+**Returns:** `{ keys, has, onKeys, clear }`
+
+#### `useGeolocation(options?: GeolocationOptions): GeolocationReturn`
+
+Watches geolocation coordinates.
+
+**Returns:** `{ isSupported, isWatching, coords, error, start, stop }`
+
+#### `useIsMounted(): Signal<boolean>`
+
+Signal that becomes `false` when the injection context is destroyed.
+
+### Element Utilities
+
+#### `useActiveElement(options?: ActiveElementOptions): Signal<Element | null>`
+
+Tracks the current active element.
+
+#### `useElementRect(target): ElementRectReturn`
+
+Tracks an element’s bounding client rect.
+
+**Returns:** `{ rect, width, height, update }`
+
+#### `useElementSize(target): ElementSizeReturn`
+
+Tracks an element’s size (width/height).
+
+#### `useFocusWithin(target): Signal<boolean>`
+
+Tracks whether focus is within a given element.
+
+#### `useInViewport(target, options?): InViewportReturn`
+
+Tracks whether an element is in the viewport.
+
+#### `useResizeObserver(target, callback, options?): ObserverReturn`
+#### `useMutationObserver(target, callback, options): ObserverReturn`
+#### `useIntersectionObserver(target, callback, options?): ObserverReturn`
+
+Observer helpers with automatic cleanup.
+
+### Utility Helpers
+
+#### `extract<T>(value: T | (() => T)): T`
+
+Resolves a direct value or getter (including signals).
+
+#### `boolAttr(value: unknown): boolean`
+
+Parses boolean-attribute-like values.
 
 ### Async Utilities
 

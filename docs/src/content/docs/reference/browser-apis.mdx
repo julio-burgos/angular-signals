@@ -137,3 +137,126 @@ effect(() => {
   console.log('Session data:', sessionData());
 });
 ```
+
+## `useDocumentVisible(options?: DocumentVisibleOptions): Signal<boolean>`
+
+Creates a signal that tracks whether the document is currently visible.
+
+**Parameters:**
+- `options?: DocumentVisibleOptions` - Optional configuration:
+  - `document?: Document` - Document to observe (default: global `document`)
+
+**Returns:** `Signal<boolean>` - `true` when the document is visible
+
+**Example:**
+```ts
+import { useDocumentVisible } from '@angular-signals/angular-signals';
+
+const isVisible = useDocumentVisible();
+
+effect(() => {
+  console.log('Visible?', isVisible());
+});
+```
+
+## `useIdle(options?: IdleOptions): IdleReturn`
+
+Tracks user idle state based on activity events.
+
+**Parameters:**
+- `options?: IdleOptions` - Optional configuration:
+  - `timeout?: number | Signal<number>` - Idle timeout in milliseconds (default: 60000)
+  - `events?: (keyof WindowEventMap)[] | Signal<(keyof WindowEventMap)[]>` - Events that reset idle timer
+  - `detectVisibilityChanges?: boolean | Signal<boolean>` - Set idle/active on visibility changes (default: true)
+  - `initialState?: boolean | Signal<boolean>` - Initial idle state (default: false)
+
+**Returns:** `IdleReturn` - Object with signals and controls:
+- `idle: Signal<boolean>` - Whether user is idle
+- `lastActive: Signal<number>` - Timestamp of last activity
+- `reset(): void` - Mark as active and reset timer
+- `stop(): void` - Stop tracking
+
+**Example:**
+```ts
+import { useIdle } from '@angular-signals/angular-signals';
+
+const { idle, lastActive } = useIdle({ timeout: 30_000 });
+```
+
+## `onClickOutside(target, handler, options?): ClickOutsideReturn`
+
+Calls a handler when an event happens outside the target element.
+
+**Parameters:**
+- `target: HTMLElement | Signal<HTMLElement | null>` - Target element
+- `handler: (event: Event) => void` - Handler called on outside events
+- `options?: ClickOutsideOptions` - Optional configuration (`events`, `capture`, `ignore`)
+
+**Returns:** `ClickOutsideReturn` - `{ stop(): void }`
+
+**Example:**
+```ts
+import { signal } from '@angular/core';
+import { onClickOutside } from '@angular-signals/angular-signals';
+
+const box = signal<HTMLElement | null>(null);
+onClickOutside(box, () => console.log('outside'), { events: ['mousedown'] });
+```
+
+## `usePressedKeys(options?: PressedKeysOptions): PressedKeysReturn`
+
+Tracks currently pressed keys.
+
+**Returns:** `PressedKeysReturn` - `{ keys, has, onKeys, clear }`
+
+**Example:**
+```ts
+import { effect } from '@angular/core';
+import { usePressedKeys } from '@angular-signals/angular-signals';
+
+const pressed = usePressedKeys();
+
+effect(() => {
+  if (pressed.has('Control', 'k')) {
+    console.log('Ctrl+K pressed');
+  }
+});
+```
+
+## `useGeolocation(options?: GeolocationOptions): GeolocationReturn`
+
+Watches geolocation coordinates.
+
+**Returns:** `GeolocationReturn` - `{ isSupported, isWatching, coords, error, start, stop }`
+
+## `useIsMounted(): Signal<boolean>`
+
+Returns a signal that becomes `false` when the current injection context is destroyed.
+
+## Element Utilities
+
+## `useActiveElement(options?: ActiveElementOptions): Signal<Element | null>`
+
+Tracks the current active element.
+
+## `useElementRect(target): ElementRectReturn`
+
+Tracks an element’s bounding client rect.
+
+## `useElementSize(target): ElementSizeReturn`
+
+Tracks an element’s size (width/height).
+
+## `useFocusWithin(target): Signal<boolean>`
+
+Tracks whether focus is within a given element.
+
+## `useInViewport(target, options?): InViewportReturn`
+
+Tracks whether an element is in the viewport.
+
+## `useResizeObserver(target, callback, options?): ObserverReturn`
+## `useMutationObserver(target, callback, options): ObserverReturn`
+## `useIntersectionObserver(target, callback, options?): ObserverReturn`
+
+Observer helpers with automatic cleanup.

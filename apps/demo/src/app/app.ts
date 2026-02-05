@@ -11,6 +11,7 @@ import {
   useToggle,
   useCounter,
   useArray,
+  useStateHistory,
   useDebounce,
   useThrottle,
   useInterval,
@@ -93,6 +94,10 @@ export class App {
   // useArray
   arrayDemo = useArray<string>(['Apple', 'Banana', 'Cherry']);
   newItem = signal('');
+
+  // useStateHistory
+  historyValue = signal(0);
+  stateHistoryDemo = useStateHistory(this.historyValue, { maxSize: 10 });
 
   // Async Demos
   // useDebounce

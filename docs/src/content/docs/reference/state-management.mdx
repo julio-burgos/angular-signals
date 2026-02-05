@@ -28,6 +28,41 @@ count.set(2);
 console.log(prevCount()); // 1
 ```
 
+## `useStateHistory<T>(state: WritableSignal<T>, options?: StateHistoryOptions<T>): StateHistoryReturn<T>`
+
+Tracks a signal’s value changes over time and provides undo/redo functionality.
+
+**Parameters:**
+- `state: WritableSignal<T>` - The writable signal to track
+- `options?: StateHistoryOptions<T>` - Optional configuration:
+  - `maxSize?: number` - Maximum number of snapshots to keep (default: Infinity)
+  - `clone?: (value: T) => T` - Clone snapshots before storing (default: identity)
+  - `timestamp?: () => number` - Timestamp provider (default: Date.now)
+
+**Returns:** `StateHistoryReturn<T>` - Object with history log signals and controls:
+- `log: Signal<readonly { snapshot: T; timestamp: number }[]>` - History log (includes current snapshot)
+- `index: Signal<number>` - Current snapshot index
+- `canUndo: Signal<boolean>` - Whether undo is possible
+- `canRedo: Signal<boolean>` - Whether redo is possible
+- `undo(): void` - Restore previous snapshot
+- `redo(): void` - Restore next snapshot
+- `clear(): void` - Clear history (keeps current snapshot)
+
+**Example:**
+```ts
+import { signal } from '@angular/core';
+import { useStateHistory } from '@angular-signals/angular-signals';
+
+const count = signal(0);
+const history = useStateHistory(count, { maxSize: 25 });
+
+count.set(1);
+count.set(2);
+
+history.undo(); // count -> 1
+history.redo(); // count -> 2
+```
+
 ## `useToggle(initial?: boolean): ToggleReturn`
 
 Creates a boolean signal with convenient toggle methods.

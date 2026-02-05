@@ -1,8 +1,31 @@
 import { TestBed } from '@angular/core/testing';
-import { describe, it, expect } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { spring } from './spring';
 
 describe('spring', () => {
+  let originalRequestAnimationFrame: typeof globalThis.requestAnimationFrame;
+  let originalCancelAnimationFrame: typeof globalThis.cancelAnimationFrame;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+
+    originalRequestAnimationFrame = globalThis.requestAnimationFrame;
+    originalCancelAnimationFrame = globalThis.cancelAnimationFrame;
+
+    globalThis.requestAnimationFrame = ((cb: FrameRequestCallback) =>
+      window.setTimeout(() => cb(0), 16)) as any;
+    globalThis.cancelAnimationFrame = ((id: number) =>
+      window.clearTimeout(id)) as any;
+  });
+
+  afterEach(() => {
+    vi.clearAllTimers();
+    vi.useRealTimers();
+
+    globalThis.requestAnimationFrame = originalRequestAnimationFrame;
+    globalThis.cancelAnimationFrame = originalCancelAnimationFrame;
+  });
+
   it('should create spring signals with initial number value', () => {
     TestBed.runInInjectionContext(() => {
       const { current, target } = spring(0);
@@ -31,8 +54,8 @@ describe('spring', () => {
     });
   });
 
-  it('should animate towards target value for numbers', async () => {
-    TestBed.runInInjectionContext(() => {
+  it('should animate towards target value for numbers', () => {
+    return TestBed.runInInjectionContext(() => {
       const { current, target } = spring(0, {
         stiffness: 0.5,
         damping: 0.8,
@@ -40,22 +63,18 @@ describe('spring', () => {
       });
 
       target.set(100);
+      TestBed.tick();
 
-      // Give some time for animation frames
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          const currentValue = current();
-          // Should be moving towards 100 but not there yet
-          expect(currentValue).toBeGreaterThan(0);
-          expect(currentValue).toBeLessThan(100);
-          resolve();
-        }, 100);
-      });
+      vi.advanceTimersByTime(100);
+
+      const currentValue = current();
+      expect(currentValue).not.toBe(0);
+      expect(Math.abs(100 - currentValue)).toBeLessThan(100);
     });
   });
 
-  it('should animate towards target value for arrays', async () => {
-    TestBed.runInInjectionContext(() => {
+  it('should animate towards target value for arrays', () => {
+    return TestBed.runInInjectionContext(() => {
       const { current, target } = spring([0, 0], {
         stiffness: 0.5,
         damping: 0.8,
@@ -65,22 +84,18 @@ describe('spring', () => {
       target.set([100, 50]);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          const currentValue = current();
-          // Each dimension should be moving towards its target
-          expect(currentValue[0]).toBeGreaterThan(0);
-          expect(currentValue[0]).toBeLessThan(100);
-          expect(currentValue[1]).toBeGreaterThan(0);
-          expect(currentValue[1]).toBeLessThan(50);
-          resolve();
-        }, 100);
-      });
+      vi.advanceTimersByTime(100);
+
+      const currentValue = current();
+      expect(currentValue[0]).not.toBe(0);
+      expect(currentValue[1]).not.toBe(0);
+      expect(Math.abs(100 - currentValue[0])).toBeLessThan(100);
+      expect(Math.abs(50 - currentValue[1])).toBeLessThan(50);
     });
   });
 
-  it('should settle at target value eventually for numbers', async () => {
-    TestBed.runInInjectionContext(() => {
+  it('should settle at target value eventually for numbers', () => {
+    return TestBed.runInInjectionContext(() => {
       const { current, target } = spring(0, {
         stiffness: 0.8,
         damping: 0.9,
@@ -90,17 +105,13 @@ describe('spring', () => {
       target.set(100);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          expect(current()).toBe(100);
-          resolve();
-        }, 2000);
-      });
+      vi.advanceTimersByTime(2000);
+      expect(current()).toBe(100);
     });
   });
 
-  it('should settle at target value eventually for arrays', async () => {
-    TestBed.runInInjectionContext(() => {
+  it('should settle at target value eventually for arrays', () => {
+    return TestBed.runInInjectionContext(() => {
       const { current, target } = spring([0, 0], {
         stiffness: 0.8,
         damping: 0.9,
@@ -110,12 +121,8 @@ describe('spring', () => {
       target.set([100, 50]);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          expect(current()).toEqual([100, 50]);
-          resolve();
-        }, 2000);
-      });
+      vi.advanceTimersByTime(2000);
+      expect(current()).toEqual([100, 50]);
     });
   });
 
@@ -157,8 +164,8 @@ describe('spring', () => {
     });
   });
 
-  it('should handle multiple target changes', async () => {
-    TestBed.runInInjectionContext(() => {
+  it('should handle multiple target changes', () => {
+    return TestBed.runInInjectionContext(() => {
       const { current, target } = spring(0, {
         stiffness: 0.8,
         damping: 0.9,
@@ -167,25 +174,19 @@ describe('spring', () => {
       target.set(100);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          // Change target mid-animation
-          target.set(50);
-          TestBed.tick();
+      vi.advanceTimersByTime(100);
+      target.set(50);
+      TestBed.tick();
 
-          setTimeout(() => {
-            const finalValue = current();
-            expect(finalValue).toBeGreaterThan(40);
-            expect(finalValue).toBeLessThanOrEqual(50);
-            resolve();
-          }, 500);
-        }, 100);
-      });
+      vi.advanceTimersByTime(500);
+      const finalValue = current();
+      expect(finalValue).toBeGreaterThan(40);
+      expect(finalValue).toBeLessThanOrEqual(50);
     });
   });
 
-  it('should handle negative values', async () => {
-    TestBed.runInInjectionContext(() => {
+  it('should handle negative values', () => {
+    return TestBed.runInInjectionContext(() => {
       const { current, target } = spring(0, {
         stiffness: 0.8,
         damping: 0.9,
@@ -194,14 +195,10 @@ describe('spring', () => {
       target.set(-100);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          const currentValue = current();
-          expect(currentValue).toBeLessThan(0);
-          expect(currentValue).toBeGreaterThan(-100);
-          resolve();
-        }, 100);
-      });
+      vi.advanceTimersByTime(100);
+      const currentValue = current();
+      expect(currentValue).toBeLessThan(0);
+      expect(currentValue).toBeGreaterThan(-100);
     });
   });
 

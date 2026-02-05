@@ -185,3 +185,39 @@ effectRef.destroy();
 ```
 
 This utility is useful when you need to watch multiple signals and perform side effects, similar to React's `useEffect` with multiple dependencies.
+
+## `extract<T>(value: T | (() => T)): T`
+
+Resolves a direct value or a getter function (including Angular Signals).
+
+**Parameters:**
+- `value: T | (() => T)` - A value or getter
+
+**Returns:** `T` - The resolved value
+
+**Example:**
+```ts
+import { signal } from '@angular/core';
+import { extract } from '@angular-signals/angular-signals';
+
+const n = extract(1); // 1
+const s = signal(2);
+const v = extract(s); // 2
+```
+
+## `boolAttr(value: unknown): boolean`
+
+Parses an HTML boolean attribute-like value into a boolean.
+
+**Parameters:**
+- `value: unknown` - Attribute-like value (e.g. `''`, `'false'`, `true`, `null`)
+
+**Returns:** `boolean` - Parsed boolean
+
+**Example:**
+```ts
+import { boolAttr } from '@angular-signals/angular-signals';
+
+boolAttr(''); // true
+boolAttr('false'); // false
+```

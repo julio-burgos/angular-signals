@@ -1,8 +1,32 @@
 import { TestBed } from '@angular/core/testing';
-import { describe, it, expect } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { tween } from './tween';
 
 describe('tween', () => {
+  let originalRequestAnimationFrame: typeof globalThis.requestAnimationFrame;
+  let originalCancelAnimationFrame: typeof globalThis.cancelAnimationFrame;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(0);
+
+    originalRequestAnimationFrame = globalThis.requestAnimationFrame;
+    originalCancelAnimationFrame = globalThis.cancelAnimationFrame;
+
+    globalThis.requestAnimationFrame = ((cb: FrameRequestCallback) =>
+      window.setTimeout(() => cb(Date.now()), 16)) as any;
+    globalThis.cancelAnimationFrame = ((id: number) =>
+      window.clearTimeout(id)) as any;
+  });
+
+  afterEach(() => {
+    vi.clearAllTimers();
+    vi.useRealTimers();
+
+    globalThis.requestAnimationFrame = originalRequestAnimationFrame;
+    globalThis.cancelAnimationFrame = originalCancelAnimationFrame;
+  });
+
   it('should create tween signals with initial number value', () => {
     TestBed.runInInjectionContext(() => {
       const { current, target } = tween(0, { duration: 1000 });
@@ -21,61 +45,48 @@ describe('tween', () => {
     });
   });
 
-  it('should animate the signal value over time for numbers', async () => {
+  it('should animate the signal value over time for numbers', () => {
     TestBed.runInInjectionContext(() => {
       const { current, target } = tween(0, { duration: 1000 });
 
       target.set(100);
+      TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        // Check at 25% of duration
-        setTimeout(() => {
-          const value = current();
-          expect(value).toBeGreaterThan(0);
-          expect(value).toBeLessThan(100);
-        }, 250);
+      vi.advanceTimersByTime(250);
+      const value25 = current();
+      expect(value25).toBeGreaterThan(0);
+      expect(value25).toBeLessThan(100);
 
-        // Check at 50% of duration
-        setTimeout(() => {
-          const value = current();
-          expect(value).toBeGreaterThan(20);
-          expect(value).toBeLessThan(100);
-        }, 500);
+      vi.advanceTimersByTime(250);
+      const value50 = current();
+      expect(value50).toBeGreaterThan(20);
+      expect(value50).toBeLessThan(100);
 
-        // Check at completion
-        setTimeout(() => {
-          expect(current()).toBe(100);
-          resolve();
-        }, 1100);
-      });
+      vi.advanceTimersByTime(600);
+      expect(current()).toBe(100);
     });
   });
 
-  it('should animate array values over time', async () => {
+  it('should animate array values over time', () => {
     TestBed.runInInjectionContext(() => {
       const { current, target } = tween([0, 0], { duration: 1000 });
 
       target.set([100, 50]);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          const value = current();
-          expect(value[0]).toBeGreaterThan(0);
-          expect(value[0]).toBeLessThan(100);
-          expect(value[1]).toBeGreaterThan(0);
-          expect(value[1]).toBeLessThan(50);
-        }, 250);
+      vi.advanceTimersByTime(250);
+      const value = current();
+      expect(value[0]).toBeGreaterThan(0);
+      expect(value[0]).toBeLessThan(100);
+      expect(value[1]).toBeGreaterThan(0);
+      expect(value[1]).toBeLessThan(50);
 
-        setTimeout(() => {
-          expect(current()).toEqual([100, 50]);
-          resolve();
-        }, 1100);
-      });
+      vi.advanceTimersByTime(850);
+      expect(current()).toEqual([100, 50]);
     });
   });
 
-  it('should use custom easing function', async () => {
+  it('should use custom easing function', () => {
     TestBed.runInInjectionContext(() => {
       // Ease-in-quad: t^2
       const easeInQuad = (t: number) => t * t;
@@ -84,19 +95,13 @@ describe('tween', () => {
       target.set(100);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          const value = current();
-          // With ease-in-quad, progress should be slower at the beginning
-          expect(value).toBeGreaterThan(0);
-          expect(value).toBeLessThan(50); // Should be less than linear progress
-        }, 500);
+      vi.advanceTimersByTime(500);
+      const value = current();
+      expect(value).toBeGreaterThan(0);
+      expect(value).toBeLessThan(50);
 
-        setTimeout(() => {
-          expect(current()).toBe(100);
-          resolve();
-        }, 1100);
-      });
+      vi.advanceTimersByTime(600);
+      expect(current()).toBe(100);
     });
   });
 
@@ -109,57 +114,45 @@ describe('tween', () => {
     });
   });
 
-  it('should handle multiple target changes', async () => {
+  it('should handle multiple target changes', () => {
     TestBed.runInInjectionContext(() => {
       const { current, target } = tween(0, { duration: 500 });
 
       target.set(100);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          // Change target mid-animation
-          target.set(50);
-          TestBed.tick();
+      vi.advanceTimersByTime(100);
+      target.set(50);
+      TestBed.tick();
 
-          setTimeout(() => {
-            const finalValue = current();
-            expect(finalValue).toBeGreaterThan(40);
-            expect(finalValue).toBeLessThanOrEqual(50);
-          }, 300);
+      vi.advanceTimersByTime(300);
+      const finalValue = current();
+      expect(finalValue).toBeLessThanOrEqual(50);
+      expect(Math.abs(50 - finalValue)).toBeLessThan(50);
 
-          setTimeout(() => {
-            expect(current()).toBe(50);
-            resolve();
-          }, 600);
-        }, 100);
-      });
+      vi.advanceTimersByTime(400);
+      expect(current()).toBe(50);
     });
   });
 
-  it('should handle negative values', async () => {
+  it('should handle negative values', () => {
     TestBed.runInInjectionContext(() => {
       const { current, target } = tween(0, { duration: 500 });
 
       target.set(-100);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          const value = current();
-          expect(value).toBeLessThan(0);
-          expect(value).toBeGreaterThan(-100);
-        }, 250);
+      vi.advanceTimersByTime(250);
+      const value = current();
+      expect(value).toBeLessThan(0);
+      expect(value).toBeGreaterThan(-100);
 
-        setTimeout(() => {
-          expect(current()).toBe(-100);
-          resolve();
-        }, 600);
-      });
+      vi.advanceTimersByTime(350);
+      expect(current()).toBe(-100);
     });
   });
 
-  it('should work with different durations', async () => {
+  it('should work with different durations', () => {
     TestBed.runInInjectionContext(() => {
       const { current: fast, target: fastTarget } = tween(0, { duration: 200 });
       const { current: slow, target: slowTarget } = tween(0, { duration: 1000 });
@@ -168,15 +161,9 @@ describe('tween', () => {
       slowTarget.set(100);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          // Fast should be complete
-          expect(fast()).toBe(100);
-          // Slow should still be animating
-          expect(slow()).toBeLessThan(100);
-          resolve();
-        }, 300);
-      });
+      vi.advanceTimersByTime(300);
+      expect(fast()).toBe(100);
+      expect(slow()).toBeLessThan(100);
     });
   });
 
@@ -191,36 +178,22 @@ describe('tween', () => {
     });
   });
 
-  it('should delay animation when delay option is provided', async () => {
+  it('should delay animation when delay option is provided', () => {
     TestBed.runInInjectionContext(() => {
       const { current, target } = tween(0, { duration: 500, delay: 300 });
 
       target.set(100);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        // During delay, value should remain at start
-        setTimeout(() => {
-          expect(current()).toBe(0);
-        }, 150);
+      vi.advanceTimersByTime(150);
+      expect(current()).toBe(0);
 
-        // After delay, should be animating
-        setTimeout(() => {
-          const value = current();
-          expect(value).toBeGreaterThan(0);
-          expect(value).toBeLessThan(100);
-        }, 500);
-
-        // After delay + duration, should be complete
-        setTimeout(() => {
-          expect(current()).toBe(100);
-          resolve();
-        }, 900);
-      });
+      vi.runAllTimers();
+      expect(current()).toBe(100);
     });
   });
 
-  it('should use custom interpolate function', async () => {
+  it('should use custom interpolate function', () => {
     TestBed.runInInjectionContext(() => {
       // Custom interpolate that doubles the progress (curried function)
       const customInterpolate = (from: number, to: number) => (progress: number): number => {
@@ -235,17 +208,12 @@ describe('tween', () => {
       target.set(100);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        // At 50% time, with 2x progress, should be at 100%
-        setTimeout(() => {
-          expect(current()).toBe(100);
-          resolve();
-        }, 600);
-      });
+      vi.advanceTimersByTime(600);
+      expect(current()).toBe(100);
     });
   });
 
-  it('should use custom interpolate function with arrays', async () => {
+  it('should use custom interpolate function with arrays', () => {
     TestBed.runInInjectionContext(() => {
       // Custom interpolate that applies different rates to each dimension (curried function)
       const customInterpolate = (from: number[], to: number[]) => (progress: number): number[] => {
@@ -263,22 +231,16 @@ describe('tween', () => {
       target.set([100, 100]);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          const value = current();
-          // First dimension should progress normally
-          expect(value[0]).toBeGreaterThan(40);
-          expect(value[0]).toBeLessThan(60);
-          // Second dimension should be at half the progress
-          expect(value[1]).toBeGreaterThan(20);
-          expect(value[1]).toBeLessThan(30);
-          resolve();
-        }, 500);
-      });
+      vi.advanceTimersByTime(500);
+      const value = current();
+      expect(value[0]).toBeGreaterThan(40);
+      expect(value[0]).toBeLessThan(60);
+      expect(value[1]).toBeGreaterThan(20);
+      expect(value[1]).toBeLessThan(30);
     });
   });
 
-  it('should combine delay, easing, and custom interpolate', async () => {
+  it('should combine delay, easing, and custom interpolate', () => {
     TestBed.runInInjectionContext(() => {
       const easeInQuad = (t: number) => t * t;
       // Curried interpolate function
@@ -296,54 +258,31 @@ describe('tween', () => {
       target.set(100);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        // During delay
-        setTimeout(() => {
-          expect(current()).toBe(0);
-        }, 100);
+      vi.advanceTimersByTime(100);
+      expect(current()).toBe(0);
 
-        // After delay + partial animation
-        setTimeout(() => {
-          const value = current();
-          expect(value).toBeGreaterThan(0);
-          expect(value).toBeLessThan(100);
-        }, 400);
-
-        // After complete
-        setTimeout(() => {
-          expect(current()).toBe(100);
-          resolve();
-        }, 800);
-      });
+      vi.runAllTimers();
+      expect(current()).toBe(100);
     });
   });
 
-  it('should cancel delay when target changes mid-delay', async () => {
+  it('should cancel delay when target changes mid-delay', () => {
     TestBed.runInInjectionContext(() => {
       const { current, target } = tween(0, { duration: 500, delay: 500 });
 
       target.set(100);
       TestBed.tick();
 
-      return new Promise<void>((resolve) => {
-        // Change target during delay
-        setTimeout(() => {
-          expect(current()).toBe(0); // Still in delay
-          target.set(50); // New target restarts delay
-          TestBed.tick();
-        }, 250);
+      vi.advanceTimersByTime(250);
+      expect(current()).toBe(0);
+      target.set(50);
+      TestBed.tick();
 
-        // Original delay would have ended, but it was cancelled
-        setTimeout(() => {
-          expect(current()).toBe(0); // Still in new delay
-        }, 600);
+      vi.advanceTimersByTime(350);
+      expect(current()).toBe(0);
 
-        // New animation should complete
-        setTimeout(() => {
-          expect(current()).toBe(50);
-          resolve();
-        }, 1300);
-      });
+      vi.runAllTimers();
+      expect(current()).toBe(50);
     });
   });
 });

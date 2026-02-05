@@ -71,3 +71,32 @@ const { current, target } = tween(0, {
 // Update target to animate
 target.set(100);
 ```
+
+## `useAnimationFrames(options?: AnimationFramesOptions): AnimationFramesReturn`
+
+Runs a `requestAnimationFrame` loop and exposes timing signals.
+
+**Parameters:**
+- `options?: AnimationFramesOptions` - Optional configuration:
+  - `immediate?: boolean` - Start immediately (default: true)
+  - `fpsLimit?: number | null | Signal<number | null>` - Optional FPS limit
+
+**Returns:** `AnimationFramesReturn` - Object with signals and controls:
+- `running: Signal<boolean>` - Whether the loop is running
+- `time: Signal<number>` - Current frame timestamp
+- `delta: Signal<number>` - Time since last emitted frame
+- `frame: Signal<number>` - Frame counter
+- `start(): void` - Start the loop
+- `stop(): void` - Stop the loop
+
+**Example:**
+```ts
+import { effect } from '@angular/core';
+import { useAnimationFrames } from '@angular-signals/angular-signals';
+
+const frames = useAnimationFrames({ fpsLimit: 30 });
+
+effect(() => {
+  console.log(frames.frame(), frames.delta());
+});
+```
