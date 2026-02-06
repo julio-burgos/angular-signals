@@ -1,4 +1,12 @@
-import { Component, effect, ElementRef, signal, ViewChild, WritableSignal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  effect,
+  ElementRef,
+  signal,
+  ViewChild,
+  WritableSignal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   deepSignal,
@@ -45,7 +53,7 @@ const DemoTextContext = createContext<WritableSignal<string>>('DemoText');
 const demoText = signal('Hello from context');
 
 @Component({
-  selector: 'demo-context-child',
+  selector: 'app-demo-context-child',
   standalone: true,
   template: `<pre>{{ text() }}</pre>`,
 })
@@ -60,7 +68,7 @@ class DemoContextChildComponent {
   styleUrl: './app.css',
   providers: [DemoTextContext.provide(demoText)],
 })
-export class App {
+export class App implements AfterViewInit {
   outsideBoxEl = signal<HTMLElement | null>(null);
   contextText = DemoTextContext.get();
 

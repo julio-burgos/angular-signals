@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { useResizeObserver, useIntersectionObserver } from './observers';
+import { useResizeObserver } from './observers';
 import { useElementRect } from './element-rect';
 import { useFocusWithin } from './focus-within';
 import { useInViewport } from './in-viewport';
@@ -23,7 +23,7 @@ describe('element utilities', () => {
         });
 
         const el = document.createElement('div');
-        const api = useResizeObserver(() => el, () => {});
+        const api = useResizeObserver(() => el, vi.fn());
         TestBed.tick();
 
         expect(api.isSupported).toBe(true);
@@ -44,13 +44,12 @@ describe('element utilities', () => {
 
     it('should update entry and inViewport', () => {
       TestBed.runInInjectionContext(() => {
-        let last: any = null;
-        (globalThis as any).IntersectionObserver = vi.fn(function (this: any, cb: any) {
+        const IntersectionObserverMock = vi.fn(function (this: any, cb: any) {
           this.observe = vi.fn();
           this.disconnect = vi.fn();
           this._cb = cb;
-          last = this;
         });
+        (globalThis as any).IntersectionObserver = IntersectionObserverMock;
 
         const el = document.createElement('div');
         const api = useInViewport(() => el);
@@ -58,7 +57,8 @@ describe('element utilities', () => {
 
         expect(api.inViewport()).toBe(false);
 
-        last._cb([{ isIntersecting: true }], last);
+        const instance = IntersectionObserverMock.mock.instances[0] as any;
+        instance._cb([{ isIntersecting: true }], instance);
         TestBed.tick();
         expect(api.inViewport()).toBe(true);
       });
@@ -109,4 +109,3 @@ describe('element utilities', () => {
     });
   });
 });
-

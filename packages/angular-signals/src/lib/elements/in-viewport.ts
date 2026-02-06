@@ -1,5 +1,5 @@
 import { computed, signal, Signal } from '@angular/core';
-import { extract, MaybeGetter } from '../utils/extract';
+import { MaybeGetter } from '../utils/extract';
 import { useIntersectionObserver } from './observers';
 
 export interface InViewportReturn {
@@ -39,4 +39,3 @@ export function useInViewport(
     stop: observer.stop,
   };
 }
-
