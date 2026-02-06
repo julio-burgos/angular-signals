@@ -260,3 +260,30 @@ Tracks whether an element is in the viewport.
 ## `useIntersectionObserver(target, callback, options?): ObserverReturn`
 
 Observer helpers with automatic cleanup.
+
+## `useScrollState(target, options?): ScrollStateReturn`
+
+Tracks scroll position, direction, arrived edges, and progress.
+
+**Parameters:**
+- `target: Window | HTMLElement | Signal<Window | HTMLElement | null>` - Scroll target
+- `options?: { threshold?: number }` - Arrived threshold in pixels (default: 1)
+
+**Returns:** `ScrollStateReturn` - `{ x, y, directions, arrived, progressX, progressY, isScrolling, update }`
+
+**Example:**
+```ts
+import { useScrollState } from '@angular-signals/angular-signals';
+
+const scroll = useScrollState(() => window);
+```
+
+## `useTextareaAutosize(target, options?): TextareaAutosizeReturn`
+
+Auto-resizes a textarea to fit its content.
+
+**Parameters:**
+- `target: HTMLTextAreaElement | Signal<HTMLTextAreaElement | null>` - Textarea element
+- `options?: { maxHeight?: number; resize?: boolean }` - Optional config
+
+**Returns:** `{ update, stop }`

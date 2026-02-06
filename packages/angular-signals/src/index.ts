@@ -7,6 +7,8 @@ export * from './lib/signal/signal';
 export * from './lib/signal/reactive';
 export * from './lib/computed/computed';
 export * from './lib/linkedsignal/linkedsignal';
+export * from './lib/reactivity/resource';
+export * from './lib/reactivity/search-params';
 
 // Animation utilities
 export * from './lib/animation/spring';
@@ -19,6 +21,8 @@ export * from './lib/state/toggle';
 export * from './lib/state/counter';
 export * from './lib/state/array';
 export * from './lib/state/history';
+export * from './lib/state/persisted-state';
+export * from './lib/state/finite-state-machine';
 
 // Async utilities
 export * from './lib/async/debounce';
@@ -47,10 +51,14 @@ export * from './lib/elements/element-rect';
 export * from './lib/elements/element-size';
 export * from './lib/elements/focus-within';
 export * from './lib/elements/in-viewport';
+export * from './lib/elements/scroll-state';
+export * from './lib/elements/textarea-autosize';
 
 // Utility helpers
 export * from './lib/utils/extract';
 export * from './lib/utils/bool-attr';
+export * from './lib/utils/on-cleanup';
+export * from './lib/utils/context';
 
 // Watch utilities
 export * from './lib/watch/watch';

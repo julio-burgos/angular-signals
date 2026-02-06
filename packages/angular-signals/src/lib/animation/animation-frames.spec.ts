@@ -5,20 +5,22 @@ import { useAnimationFrames } from './animation-frames';
 describe('useAnimationFrames', () => {
   let originalRequestAnimationFrame: typeof globalThis.requestAnimationFrame;
   let originalCancelAnimationFrame: typeof globalThis.cancelAnimationFrame;
-  let queue: FrameRequestCallback[];
+  let nextId: number;
+  let callbacks: Map<number, FrameRequestCallback>;
 
   beforeEach(() => {
     originalRequestAnimationFrame = globalThis.requestAnimationFrame;
     originalCancelAnimationFrame = globalThis.cancelAnimationFrame;
 
-    queue = [];
+    nextId = 0;
+    callbacks = new Map();
     globalThis.requestAnimationFrame = ((cb: FrameRequestCallback) => {
-      queue.push(cb);
-      return queue.length;
+      nextId++;
+      callbacks.set(nextId, cb);
+      return nextId;
     }) as any;
     globalThis.cancelAnimationFrame = ((id: number) => {
-      const idx = id - 1;
-      if (queue[idx]) queue[idx] = () => {};
+      callbacks.delete(id);
     }) as any;
   });
 
@@ -34,10 +36,14 @@ describe('useAnimationFrames', () => {
 
       expect(frames.running()).toBe(true);
       expect(frames.frame()).toBe(0);
-      expect(queue.length).toBeGreaterThan(0);
+      expect(callbacks.size).toBeGreaterThan(0);
 
-      const first = queue.shift()!;
-      first(16);
+      const first = callbacks.entries().next().value as
+        | [number, FrameRequestCallback]
+        | undefined;
+      expect(first).toBeTruthy();
+      callbacks.delete(first![0]);
+      first![1](16);
       expect(frames.frame()).toBeGreaterThan(0);
 
       frames.stop();

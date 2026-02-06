@@ -14,7 +14,7 @@ A TypeScript library that extends Angular's signals API with additional utilitie
 - **Timing Utilities** - Interval, timeout, and now signals
 - **Browser APIs** - Media query, event listener, storage, visibility, idle, and input utilities
 - **Element Utilities** - Element size/rect, focus-within, viewport detection, and observer helpers
-- **Utility Helpers** - `extract` and `boolAttr`
+- **Utility Helpers** - `extract`, `boolAttr`, `onCleanup`, and `createContext`
 
 ## 🚀 Installation
 
@@ -100,6 +100,40 @@ import { onClickOutside } from '@angular-signals/angular-signals';
 
 const box = signal<HTMLElement | null>(null);
 onClickOutside(box, () => console.log('outside'), { events: ['mousedown'] });
+```
+
+## 🧩 Context
+
+#### `createContext<T>(description?: string): Context<T>`
+
+Create a typed context helper built on Angular DI (Runed-inspired).
+
+**Parameters:**
+- `description?: string` - Used for the underlying token name and error messages
+
+**Returns:** `Context<T>` - `{ token, provide, get, getOr, exists }`
+
+**Example:**
+```ts
+import { Component } from '@angular/core';
+import { createContext } from '@angular-signals/angular-signals';
+
+const ThemeContext = createContext<'light' | 'dark'>('Theme');
+
+@Component({
+  selector: 'app-parent',
+  template: `<app-child />`,
+  providers: [ThemeContext.provide('dark')],
+})
+export class Parent {}
+
+@Component({
+  selector: 'app-child',
+  template: `Theme: {{ theme }}`,
+})
+export class Child {
+  theme = ThemeContext.get();
+}
 ```
 
 ## 🎮 Demo

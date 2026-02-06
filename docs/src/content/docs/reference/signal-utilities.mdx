@@ -221,3 +221,108 @@ import { boolAttr } from '@angular-signals/angular-signals';
 boolAttr(''); // true
 boolAttr('false'); // false
 ```
+
+## `onCleanup(fn: () => void): void`
+
+Registers a cleanup callback.
+
+- If called inside a callback invoked by this library (e.g. `watch`, `resource`), it registers an effect cleanup.
+- Otherwise, it falls back to `DestroyRef.onDestroy` if in an injection context.
+
+**Parameters:**
+- `fn: () => void` - Cleanup callback
+
+**Example:**
+```ts
+import { watch, onCleanup } from '@angular-signals/angular-signals';
+
+watch(() => 1, () => {
+  const id = setInterval(() => {}, 1000);
+  onCleanup(() => clearInterval(id));
+});
+```
+
+## `createContext<T>(description?: string): Context<T>`
+
+Creates a typed “context” helper built on Angular DI (Runed-inspired).
+
+This is a small wrapper around `InjectionToken` + `inject()` to make creating and
+consuming scoped values ergonomic, similar to Svelte’s context pattern.
+
+**Parameters:**
+- `description?: string` - Used for the underlying token name and error messages
+
+**Returns:** `Context<T>` - `{ token, provide, get, getOr, exists }`
+
+**Example:**
+```ts
+import { Component } from '@angular/core';
+import { createContext } from '@angular-signals/angular-signals';
+
+const ThemeContext = createContext<'light' | 'dark'>('Theme');
+
+@Component({
+  selector: 'app-parent',
+  template: `<app-child />`,
+  providers: [ThemeContext.provide('dark')],
+})
+export class Parent {}
+
+@Component({
+  selector: 'app-child',
+  template: `Theme: {{ theme }}`,
+})
+export class Child {
+  theme = ThemeContext.get();
+}
+```
+
+## `resource<S, T>(source, fetcher, options?): ResourceReturn<T>`
+
+Creates an async resource driven by a signal (or getter) source.
+
+**Parameters:**
+- `source: S | Signal<S> | (() => S)` - Source value/getter
+- `fetcher: (ctx: { value: S; abortSignal: AbortSignal }) => Promise<T>` - Async fetcher
+- `options?: ResourceOptions<T>` - Optional configuration (`initialValue`, `lazy`, `debounce`)
+
+**Returns:** `ResourceReturn<T>`:
+- `status: Signal<'idle' | 'loading' | 'success' | 'error'>`
+- `loading: Signal<boolean>`
+- `error: Signal<unknown | null>`
+- `current: Signal<T | undefined>`
+- `refetch(): void`
+
+**Example:**
+```ts
+import { signal } from '@angular/core';
+import { resource } from '@angular-signals/angular-signals';
+
+const query = signal('hello');
+const upper = resource(query, async ({ value }) => value.toUpperCase());
+```
+
+## `useSearchParams(options?: SearchParamsOptions): SearchParamsReturn`
+
+Reactive URL query string helpers (browser-only).
+
+**Parameters:**
+- `options?: SearchParamsOptions` - Optional configuration:
+  - `mode?: 'push' | 'replace'` - History update mode (default: `'replace'`)
+  - `preserveHash?: boolean` - Preserve `location.hash` (default: true)
+
+**Returns:** `SearchParamsReturn`:
+- `params: Signal<URLSearchParams>` - Current params
+- `get(key): string | null`
+- `set(key, value): void`
+- `remove(key): void`
+- `setMany(entries): void`
+- `replaceAll(params): void`
+
+**Example:**
+```ts
+import { useSearchParams } from '@angular-signals/angular-signals';
+
+const sp = useSearchParams({ mode: 'replace' });
+sp.set('tab', 'settings');
+```

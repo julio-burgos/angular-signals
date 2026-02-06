@@ -256,6 +256,52 @@ Active: {{ userReactive.isActive() }}</pre
         </div>
       </div>
     </div>
+
+    <!-- usePersistedState -->
+    <div class="sub-section">
+      <h3>usePersistedState</h3>
+      <p class="description">Persist state to localStorage (survives reload)</p>
+      <div class="button-group">
+        <button (click)="decrementPersisted()">-1</button>
+        <button (click)="incrementPersisted()">+1</button>
+        <button (click)="persistedCounter.remove()">Remove</button>
+      </div>
+      <div class="value-display">
+        <span
+          >Persisted: <strong>{{ persistedCounter.value() }}</strong></span
+        >
+        <span
+          >Supported: <strong>{{ persistedCounter.isSupported }}</strong></span
+        >
+      </div>
+      <p class="hint">Refresh the page to see it persisted.</p>
+    </div>
+
+    <!-- Finite State Machine -->
+    <div class="sub-section">
+      <h3>FiniteStateMachine</h3>
+      <p class="description">A tiny FSM with a reactive state signal</p>
+      <div class="button-group">
+        <button (click)="trafficNext()">Next</button>
+      </div>
+      <div class="value-display">
+        <span
+          >State:
+          <strong
+            [class.active]="traffic.state() === 'green'"
+            >{{ traffic.state() }}</strong
+          ></span
+        >
+      </div>
+      <div class="progress-bar">
+        <div
+          class="progress-fill"
+          [class.spring]="traffic.state() === 'green'"
+          [class.tween]="traffic.state() === 'yellow'"
+          [style.width.%]="traffic.state() === 'red' ? 33 : traffic.state() === 'green' ? 66 : 100"
+        ></div>
+      </div>
+    </div>
   </section>
 
   <!-- Async Utilities -->
@@ -297,6 +343,257 @@ Active: {{ userReactive.isActive() }}</pre
         <div class="value-display">
           <span>Scroll Y: <strong>{{ scrollY() }}</strong></span>
           <span>Throttled: <strong>{{ throttledScrollY() }}</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Runed.dev-inspired Utilities -->
+  <section class="demo-section">
+    <h2>🧩 Runed.dev-inspired Utilities</h2>
+
+    <!-- resource -->
+    <div class="sub-section">
+      <h3>resource</h3>
+      <p class="description">
+        Async resources driven by signals (with cancellation + debounce)
+      </p>
+      <div class="controls">
+        <div class="control-group">
+          <span>Input:</span>
+          <input
+            type="text"
+            [value]="resourceInput()"
+            (input)="resourceInput.set($any($event.target).value)"
+          />
+          <button (click)="upperResource.refetch()">Refetch</button>
+        </div>
+      </div>
+      <div class="value-display">
+        <span>Status: <strong>{{ upperResource.status() }}</strong></span>
+        <span>Loading: <strong>{{ upperResource.loading() }}</strong></span>
+      </div>
+      <div class="output">
+        <div class="output-col">
+          <h4>Current:</h4>
+          <pre>{{ upperResource.current() }}</pre>
+        </div>
+        <div class="output-col">
+          <h4>Error:</h4>
+          <pre>{{ upperResource.error() | json }}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- useSearchParams -->
+    <div class="sub-section">
+      <h3>useSearchParams</h3>
+      <p class="description">Reactive URL query string helpers</p>
+      <div class="controls">
+        <div class="control-group">
+          <span>Key:</span>
+          <input
+            type="text"
+            [value]="searchParamKey()"
+            (input)="searchParamKey.set($any($event.target).value)"
+          />
+        </div>
+        <div class="control-group">
+          <span>Value:</span>
+          <input
+            type="text"
+            [value]="searchParamValue()"
+            (input)="searchParamValue.set($any($event.target).value)"
+          />
+        </div>
+      </div>
+      <div class="button-group">
+        <button (click)="setSearchParam()">Set</button>
+        <button (click)="removeSearchParam()">Remove</button>
+      </div>
+      <div class="output">
+        <div class="output-col">
+          <h4>Params</h4>
+          <pre>{{ searchParams.params().toString() }}</pre>
+        </div>
+      </div>
+      <p class="hint">Updates the URL query string using History API.</p>
+    </div>
+
+    <!-- useDocumentVisible / useIdle / usePressedKeys -->
+    <div class="sub-section">
+      <h3>Document + Input Sensors</h3>
+      <p class="description">
+        Page visibility, idle detection, and pressed keys tracking
+      </p>
+      <div class="button-group">
+        <button (click)="idleDemo.reset()">Reset Idle</button>
+        <button (click)="idleDemo.stop()">Stop Idle Tracking</button>
+      </div>
+      <div class="output">
+        <div class="output-col">
+          <h4>Visibility</h4>
+          <pre>{{ isDocumentVisible() }}</pre>
+        </div>
+        <div class="output-col">
+          <h4>Idle</h4>
+          <pre>idle: {{ idleDemo.idle() }}
+lastActive: {{ idleDemo.lastActive() }}</pre>
+        </div>
+        <div class="output-col">
+          <h4>Pressed Keys</h4>
+          <pre>{{ pressedKeys.keys() | json }}</pre>
+        </div>
+      </div>
+      <p class="hint">Switch tabs to see visibility change. Press keys to see tracking.</p>
+    </div>
+
+    <!-- onClickOutside -->
+    <div class="sub-section">
+      <h3>onClickOutside</h3>
+      <p class="description">Close UI when clicking outside an element</p>
+      <div class="button-group">
+        <button (click)="openOutsideBox()" [disabled]="isOutsideBoxOpen()">
+          Open Box
+        </button>
+      </div>
+      <div *ngIf="isOutsideBoxOpen()" class="output">
+        <div class="output-col">
+          <h4>Click Outside</h4>
+          <div
+            #outsideBox
+            style="padding: 1rem; border: 2px dashed #007bff; border-radius: 8px;"
+          >
+            Click outside this box to close it.
+          </div>
+        </div>
+      </div>
+      <p class="hint">The box is wired via `onClickOutside`.</p>
+    </div>
+
+    <!-- createContext -->
+    <div class="sub-section">
+      <h3>createContext</h3>
+      <p class="description">
+        Scoped values via Angular DI (Runed-inspired context pattern)
+      </p>
+      <div class="controls">
+        <div class="control-group">
+          <span>Provided value:</span>
+          <input
+            type="text"
+            [value]="contextText()"
+            (input)="contextText.set($any($event.target).value)"
+          />
+        </div>
+      </div>
+      <div class="output">
+        <div class="output-col">
+          <h4>Parent</h4>
+          <pre>{{ contextText() }}</pre>
+        </div>
+        <div class="output-col">
+          <h4>Child (injected)</h4>
+          <demo-context-child />
+        </div>
+      </div>
+    </div>
+
+    <!-- Element utilities -->
+    <div class="sub-section">
+      <h3>Element Utilities</h3>
+      <p class="description">
+        Active element, focus-within, scroll state, and textarea autosize
+      </p>
+
+      <div class="output">
+        <div class="output-col">
+          <h4>Active Element</h4>
+          <pre>{{ activeEl()?.tagName || 'null' }}</pre>
+        </div>
+        <div class="output-col">
+          <h4>Focus Within</h4>
+          <div
+            #focusBox
+            style="padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;"
+          >
+            <div class="controls">
+              <div class="control-group">
+                <span>Field A:</span>
+                <input type="text" placeholder="Focus me" />
+              </div>
+              <div class="control-group">
+                <span>Field B:</span>
+                <input type="text" placeholder="Or focus me" />
+              </div>
+            </div>
+            <div class="value-display">
+              <span
+                >within:
+                <strong [class.active]="focusWithin()">{{ focusWithin() }}</strong></span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="output" style="margin-top: 1rem;">
+        <div class="output-col">
+          <h4>Scroll State</h4>
+          <div
+            #scrollBox
+            style="height: 120px; overflow: auto; border: 1px solid #ddd; border-radius: 8px; padding: 0.5rem;"
+          >
+            <div style="height: 500px; width: 800px; padding: 0.5rem;">
+              Scroll me (both directions). Current scroll updates live.
+            </div>
+          </div>
+          <pre>x: {{ scrollState.x() }}
+y: {{ scrollState.y() }}
+arrived: {{ scrollState.arrived() | json }}
+dirs: {{ scrollState.directions() | json }}
+progress: {{ scrollState.progressX() | number:'1.2-2' }}, {{ scrollState.progressY() | number:'1.2-2' }}</pre>
+        </div>
+        <div class="output-col">
+          <h4>Textarea Autosize</h4>
+          <textarea
+            #autosizeTextarea
+            rows="2"
+            style="width: 100%; resize: none; box-sizing: border-box;"
+            placeholder="Type multiple lines…"
+          ></textarea>
+          <div class="hint">Grows with content (clamped to 200px).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- useGeolocation / useIsMounted / useAnimationFrames -->
+    <div class="sub-section">
+      <h3>Sensors + Lifecycle + Frames</h3>
+      <p class="description">
+        Geolocation, mounted signal, and animation frame loop
+      </p>
+      <div class="button-group">
+        <button (click)="geo.start()" [disabled]="geo.isWatching()">Start Geo</button>
+        <button (click)="geo.stop()" [disabled]="!geo.isWatching()">Stop Geo</button>
+      </div>
+      <div class="output">
+        <div class="output-col">
+          <h4>Geolocation</h4>
+          <pre>supported: {{ geo.isSupported }}
+watching: {{ geo.isWatching() }}
+coords: {{ geo.coords() | json }}
+error: {{ geo.error() | json }}</pre>
+        </div>
+        <div class="output-col">
+          <h4>IsMounted</h4>
+          <pre>{{ mounted() }}</pre>
+        </div>
+        <div class="output-col">
+          <h4>Animation Frames</h4>
+          <pre>running: {{ frames.running() }}
+frame: {{ frames.frame() }}
+delta: {{ frames.delta() | number:'1.0-0' }}</pre>
         </div>
       </div>
     </div>

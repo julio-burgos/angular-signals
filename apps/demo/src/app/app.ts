@@ -1,10 +1,13 @@
-import { Component, effect, signal } from '@angular/core';
+import { Component, effect, ElementRef, signal, ViewChild, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   deepSignal,
   deepComputed,
   deepLinkedSignal,
   reactive,
+  resource,
+  createContext,
+  createFiniteStateMachine,
   spring,
   tween,
   usePrevious,
@@ -12,6 +15,7 @@ import {
   useCounter,
   useArray,
   useStateHistory,
+  usePersistedState,
   useDebounce,
   useThrottle,
   useInterval,
@@ -22,16 +26,52 @@ import {
   useLocalStorage,
   useSessionStorage,
   watchLocalStorageKey,
+  useDocumentVisible,
+  useIdle,
+  onClickOutside,
+  usePressedKeys,
+  useGeolocation,
+  useIsMounted,
+  useActiveElement,
+  useFocusWithin,
+  useScrollState,
+  useTextareaAutosize,
+  useAnimationFrames,
+  useSearchParams,
   watch,
 } from '@angular-signals/angular-signals';
 
+const DemoTextContext = createContext<WritableSignal<string>>('DemoText');
+const demoText = signal('Hello from context');
+
+@Component({
+  selector: 'demo-context-child',
+  standalone: true,
+  template: `<pre>{{ text() }}</pre>`,
+})
+class DemoContextChildComponent {
+  text = DemoTextContext.get();
+}
+
 @Component({
   selector: 'app-root',
-  imports: [CommonModule],
+  imports: [CommonModule, DemoContextChildComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
+  providers: [DemoTextContext.provide(demoText)],
 })
 export class App {
+  outsideBoxEl = signal<HTMLElement | null>(null);
+  contextText = DemoTextContext.get();
+
+  @ViewChild('outsideBox', { read: ElementRef })
+  set outsideBoxRef(ref: ElementRef<HTMLElement> | undefined) {
+    this.outsideBoxEl.set(ref?.nativeElement ?? null);
+  }
+  @ViewChild('autosizeTextarea', { read: ElementRef }) autosizeTextareaRef?: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('scrollBox', { read: ElementRef }) scrollBoxRef?: ElementRef<HTMLElement>;
+  @ViewChild('focusBox', { read: ElementRef }) focusBoxRef?: ElementRef<HTMLElement>;
+
   // Reactive Demo
   userReactive = reactive({
     name: 'John Doe',
@@ -99,6 +139,16 @@ export class App {
   historyValue = signal(0);
   stateHistoryDemo = useStateHistory(this.historyValue, { maxSize: 10 });
 
+  // Persisted state
+  persistedCounter = usePersistedState('demo-persisted-counter', 0);
+
+  // Finite state machine demo
+  traffic = createFiniteStateMachine<'red' | 'green' | 'yellow', 'next'>('red', {
+    red: { next: 'green' },
+    green: { next: 'yellow' },
+    yellow: { next: 'red' },
+  });
+
   // Async Demos
   // useDebounce
   searchInput = signal('');
@@ -126,6 +176,57 @@ export class App {
   // useMediaQuery
   isMobile = useMediaQuery('(max-width: 768px)');
   isDesktop = useMediaQuery('(min-width: 1024px)');
+
+  // Document visibility / idle / input
+  isDocumentVisible = useDocumentVisible();
+  idleDemo = useIdle({ timeout: 5000 });
+  pressedKeys = usePressedKeys();
+
+  // Click outside
+  isOutsideBoxOpen = signal(true);
+
+  // Element utilities
+  focusBoxEl = signal<HTMLElement | null>(null);
+  focusWithin = useFocusWithin(this.focusBoxEl);
+
+  scrollBoxEl = signal<HTMLElement | null>(null);
+  scrollState = useScrollState(this.scrollBoxEl);
+
+  autosizeTextareaEl = signal<HTMLTextAreaElement | null>(null);
+  textareaAutosize = useTextareaAutosize(this.autosizeTextareaEl, { maxHeight: 200 });
+
+  activeEl = useActiveElement();
+
+  // Sensors
+  geo = useGeolocation({ immediate: false });
+
+  // Component lifecycle
+  mounted = useIsMounted();
+
+  // Animation frames
+  frames = useAnimationFrames({ fpsLimit: 30 });
+
+  // Resource demo (no network)
+  resourceInput = signal('hello');
+  upperResource = resource(
+    this.resourceInput,
+    async ({ value, abortSignal }) => {
+      await new Promise<void>((resolve, reject) => {
+        const id = window.setTimeout(() => resolve(), 400);
+        abortSignal.addEventListener('abort', () => {
+          window.clearTimeout(id);
+          reject(new DOMException('Aborted', 'AbortError'));
+        });
+      });
+      return value.toUpperCase();
+    },
+    { debounce: 150 }
+  );
+
+  // Search params
+  searchParams = useSearchParams({ mode: 'replace' });
+  searchParamKey = signal('demo');
+  searchParamValue = signal('123');
 
   // useLocalStorage & useSessionStorage
   localStorageDemo = useLocalStorage('demo-key', 'Default value');
@@ -160,6 +261,17 @@ export class App {
         this.watchDemoMessage()
       );
     });
+
+    // Close box on outside click
+    onClickOutside(this.outsideBoxEl, () => this.isOutsideBoxOpen.set(false), {
+      events: ['mousedown'],
+    });
+  }
+
+  ngAfterViewInit() {
+    this.autosizeTextareaEl.set(this.autosizeTextareaRef?.nativeElement ?? null);
+    this.scrollBoxEl.set(this.scrollBoxRef?.nativeElement ?? null);
+    this.focusBoxEl.set(this.focusBoxRef?.nativeElement ?? null);
   }
 
   // DeepSignal methods
@@ -285,6 +397,34 @@ export class App {
 
   clearArray() {
     this.arrayDemo.clear();
+  }
+
+  openOutsideBox() {
+    this.isOutsideBoxOpen.set(true);
+  }
+
+  incrementPersisted() {
+    this.persistedCounter.value.update((v) => v + 1);
+  }
+
+  decrementPersisted() {
+    this.persistedCounter.value.update((v) => v - 1);
+  }
+
+  trafficNext() {
+    this.traffic.send('next');
+  }
+
+  setSearchParam() {
+    const k = this.searchParamKey().trim();
+    if (!k) return;
+    this.searchParams.set(k, this.searchParamValue());
+  }
+
+  removeSearchParam() {
+    const k = this.searchParamKey().trim();
+    if (!k) return;
+    this.searchParams.remove(k);
   }
 
   filterByQuery(query: string) {

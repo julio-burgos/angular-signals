@@ -1,4 +1,4 @@
-import { effect, signal, Signal } from '@angular/core';
+import { effect, signal, Signal, untracked } from '@angular/core';
 import { extract, MaybeGetter } from '../utils/extract';
 
 export interface AnimationFramesOptions {
@@ -80,7 +80,7 @@ export function useAnimationFrames(
   };
 
   effect((onCleanup) => {
-    if (options.immediate ?? true) start();
+    if (options.immediate ?? true) untracked(() => start());
     onCleanup(() => stop());
   });
 
@@ -93,4 +93,3 @@ export function useAnimationFrames(
     stop,
   };
 }
-

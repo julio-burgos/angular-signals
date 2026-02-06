@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added: useAnimationFrames - requestAnimationFrame loop with timing signals
 - Added: extract - Resolve direct values or getters/signals
 - Added: boolAttr - Parse boolean-attribute-like values
+- Added: createContext - Runed-inspired typed context helper built on Angular DI
+- Added: useSearchParams - Reactive URL query string helpers
 
 ### Changed
 - **Browser Storage:** `useSessionStorage` and `watchSessionStorageKey` no longer synchronize across browser tabs since sessionStorage is unique to each tab/window

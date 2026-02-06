@@ -15,7 +15,7 @@ A TypeScript library that extends Angular's signals API with additional utilitie
 - **Watch Storage**: Subscribe to specific localStorage/sessionStorage key changes
 - **Watch Utilities**: Effect utilities for watching multiple signals
 - **Element Utilities**: Element size/rect, focus-within, viewport detection, and observer helpers
-- **Utility Helpers**: `extract` and `boolAttr`
+- **Utility Helpers**: `extract`, `boolAttr`, `onCleanup`, and `createContext`
 
 ## Installation
 
@@ -147,6 +147,39 @@ user.update({ name: 'Bob', email: 'bob@example.com' });
 user.reset();
 ```
 
+#### `resource<S, T>(source: S | Signal<S> | (() => S), fetcher: (ctx: { value: S; abortSignal: AbortSignal }) => Promise<T>, options?: ResourceOptions<T>): ResourceReturn<T>`
+
+Creates an async resource driven by a signal (or getter) source.
+
+**Parameters:**
+- `source` - Value/getter that triggers fetches when changed
+- `fetcher` - Async fetcher (supports cancellation via `abortSignal`)
+- `options` - `{ initialValue?, lazy?, debounce? }`
+
+**Returns:** `{ status, loading, error, current, refetch, set, update }`
+
+**Example:**
+```ts
+const query = signal('hello');
+const upper = resource(query, async ({ value }) => value.toUpperCase());
+```
+
+#### `onCleanup(fn: () => void): void`
+
+Registers an effect cleanup when used inside a `watch`/`resource` callback (or falls back to `DestroyRef.onDestroy`).
+
+#### `useSearchParams(options?: SearchParamsOptions): SearchParamsReturn`
+
+Reactive URL query string helpers (browser-only).
+
+**Returns:** `{ params, get, set, setMany, remove, replaceAll }`
+
+**Example:**
+```ts
+const sp = useSearchParams({ mode: 'replace' });
+sp.set('tab', 'settings');
+```
+
 ### Animation Utilities
 
 #### `spring<T extends number | number[]>(config: SpringConfig<T>): SpringReturn<T>`
@@ -271,6 +304,28 @@ history.undo(); // count -> 1
 history.redo(); // count -> 2
 ```
 
+#### `usePersistedState<T>(key: string, initialValue: T, options?: PersistedStateOptions<T>): PersistedStateReturn<T>`
+
+Creates a writable signal persisted to `localStorage` or `sessionStorage`.
+
+**Returns:** `{ isSupported, value, remove }`
+
+**Example:**
+```ts
+const theme = usePersistedState('theme', 'light');
+theme.value.set('dark');
+```
+
+#### `createFiniteStateMachine<S, E>(initial: S, definition: MachineDefinition<S, E>): FiniteStateMachine<S, E>`
+
+Creates a finite state machine with a reactive `state` signal.
+
+**Example:**
+```ts
+const fsm = createFiniteStateMachine<'a' | 'b', 'next'>('a', { a: { next: 'b' }, b: { next: 'a' } });
+fsm.send('next');
+```
+
 ### Browser APIs
 
 #### `useDocumentVisible(options?: DocumentVisibleOptions): Signal<boolean>`
@@ -338,6 +393,14 @@ Tracks whether an element is in the viewport.
 
 Observer helpers with automatic cleanup.
 
+#### `useScrollState(target, options?): ScrollStateReturn`
+
+Tracks scroll position, direction, and arrived/progress state.
+
+#### `useTextareaAutosize(target, options?): TextareaAutosizeReturn`
+
+Auto-resizes a textarea to fit its content.
+
 ### Utility Helpers
 
 #### `extract<T>(value: T | (() => T)): T`
@@ -347,6 +410,38 @@ Resolves a direct value or getter (including signals).
 #### `boolAttr(value: unknown): boolean`
 
 Parses boolean-attribute-like values.
+
+#### `createContext<T>(description?: string): Context<T>`
+
+Creates a typed “context” helper built on Angular DI.
+
+**Parameters:**
+- `description?: string` - Used for the underlying token name and error messages
+
+**Returns:** `Context<T>` - `{ token, provide, get, getOr, exists }`
+
+**Example:**
+```ts
+import { Component } from '@angular/core';
+import { createContext } from '@angular-signals/angular-signals';
+
+const ThemeContext = createContext<'light' | 'dark'>('Theme');
+
+@Component({
+  selector: 'app-parent',
+  template: `<app-child />`,
+  providers: [ThemeContext.provide('dark')],
+})
+export class Parent {}
+
+@Component({
+  selector: 'app-child',
+  template: `Theme: {{ theme }}`,
+})
+export class Child {
+  theme = ThemeContext.get();
+}
+```
 
 ### Async Utilities
 

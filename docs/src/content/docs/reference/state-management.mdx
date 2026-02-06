@@ -158,3 +158,55 @@ console.log(todos.items()); // ['Walk dog', 'Clean room']
 todos.clear();
 console.log(todos.items()); // []
 ```
+
+## `usePersistedState<T>(key: string, initialValue: T, options?: PersistedStateOptions<T>): PersistedStateReturn<T>`
+
+Creates a writable signal persisted to `localStorage` or `sessionStorage`.
+
+**Parameters:**
+- `key: string` - Storage key
+- `initialValue: T` - Initial value when missing/invalid
+- `options?: PersistedStateOptions<T>` - Optional configuration:
+  - `storage?: 'local' | 'session'` - Storage type (default: `'local'`)
+  - `sync?: boolean` - Sync across tabs/windows (localStorage only, default: true)
+  - `serialize?: (value: T) => string` - Serializer (default: `JSON.stringify`)
+  - `deserialize?: (raw: string) => T` - Deserializer (default: `JSON.parse`)
+
+**Returns:** `PersistedStateReturn<T>`:
+- `isSupported: boolean` - Whether storage is available
+- `value: WritableSignal<T>` - Persisted writable signal
+- `remove(): void` - Remove stored value and reset signal
+
+**Example:**
+```ts
+import { usePersistedState } from '@angular-signals/angular-signals';
+
+const theme = usePersistedState('theme', 'light');
+theme.value.set('dark'); // persists
+```
+
+## `createFiniteStateMachine<S, E>(initial: S, definition: MachineDefinition<S, E>): FiniteStateMachine<S, E>`
+
+Creates a finite state machine with a reactive `state` signal.
+
+**Parameters:**
+- `initial: S` - Initial state
+- `definition: MachineDefinition<S, E>` - State definitions and transitions
+
+**Returns:** `FiniteStateMachine<S, E>`:
+- `state: Signal<S>` - Current state
+- `send(event: E, ...args): void` - Transition immediately
+- `debounce(ms: number, event: E, ...args): void` - Debounced transition
+
+**Example:**
+```ts
+import { createFiniteStateMachine } from '@angular-signals/angular-signals';
+
+const traffic = createFiniteStateMachine<'red' | 'green' | 'yellow', 'next'>('red', {
+  red: { next: 'green' },
+  green: { next: 'yellow' },
+  yellow: { next: 'red' },
+});
+
+traffic.send('next'); // 'green'
+```
