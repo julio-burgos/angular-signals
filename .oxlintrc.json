@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "unicorn",
+    "oxc"
+  ],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "eslint/no-unused-vars": "off",
+    "unicorn/no-new-array": "off",
+    "vitest/require-mock-type-parameters": "off"
+  },
+  "env": {
+    "builtin": true
+  }
+}
