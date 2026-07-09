@@ -4,8 +4,8 @@
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
-      "!{projectRoot}/.eslintrc.json",
-      "!{projectRoot}/eslint.config.mjs",
+      "!{projectRoot}/.oxlintrc.json",
+      "!{projectRoot}/.oxfmtrc.json",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/src/test-setup.[jt]s"
@@ -19,13 +19,11 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
-    "@nx/eslint:lint": {
+    "lint": {
       "cache": true,
       "inputs": [
         "default",
-        "{workspaceRoot}/.eslintrc.json",
-        "{workspaceRoot}/.eslintignore",
-        "{workspaceRoot}/eslint.config.mjs"
+        "{workspaceRoot}/.oxlintrc.json"
       ]
     },
     "@nx/vite:test": {
@@ -36,12 +34,12 @@
   "generators": {
     "@nx/angular:application": {
       "e2eTestRunner": "none",
-      "linter": "eslint",
+      "linter": "none",
       "style": "css",
       "unitTestRunner": "none"
     },
     "@nx/angular:library": {
-      "linter": "eslint",
+      "linter": "none",
       "unitTestRunner": "vitest"
     },
     "@nx/angular:component": {

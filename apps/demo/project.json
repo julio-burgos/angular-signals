@@ -65,7 +65,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint"
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "oxlint --config .oxlintrc.json --deny-warnings --vitest-plugin --no-error-on-unmatched-pattern apps/demo"
+      }
     },
     "serve-static": {
       "continuous": true,
